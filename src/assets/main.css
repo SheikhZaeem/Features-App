@@ -1,0 +1,17 @@
+/* Global styles */
+:root {
+  --primary: #42b983;
+  --danger: #ff5252;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
