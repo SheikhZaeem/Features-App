@@ -6,6 +6,7 @@
       <button @click="upvote">👍 {{ feature.upvotes }}</button>
       <span v-if="feature.exists" class="exists-badge">Already Exists</span>
     </div>
+    <button class="feature-button">Delete</button>
     <CommentSection 
       :comments="feature.comments" 
       @add-comment="addComment" 
@@ -43,5 +44,8 @@ const addComment = (comment) => {
 .exists-badge {
   color: green;
   margin-left: 1rem;
+}
+.feature-button {
+  margin-top: 20px;
 }
 </style>

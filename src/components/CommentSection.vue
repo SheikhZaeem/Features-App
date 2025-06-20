@@ -1,6 +1,6 @@
 <template>
   <div class="comments">
-    <h4>Comments</h4>
+    <h3>Comments: </h3>
     <div v-for="comment in comments" :key="comment.id">
       <strong>{{ comment.user }}:</strong> {{ comment.text }}
     </div>
