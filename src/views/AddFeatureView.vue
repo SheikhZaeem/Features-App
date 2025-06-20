@@ -29,7 +29,6 @@ const submitFeature = () => {
 </script>
 
 <style scoped>
-/* Optional styling */
 form {
   display: flex;
   flex-direction: column;

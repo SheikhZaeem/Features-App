@@ -3,7 +3,11 @@
     <div class="header-overlay"></div>
     <div class="header-content">
       <router-link to="/" class="logo">
-        <span class="logo-text">MOBIVISOR</span>
+         <img 
+          src="@/assets/icons/mobivisor-icon.png" 
+          alt="Mobivisor" 
+          class="logo-image"
+        >
       </router-link>
       <nav>
         <router-link to="/" class="nav-link">Home</router-link>
@@ -32,42 +36,43 @@ const isAdmin = ref(true); //replae with real auth check later
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.header-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(10, 26, 47, 0.124);
-}
-
 .header-content {
   position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 1600px;
+  /* margin: 10px auto; */
   padding: 0 2rem;
-  display: flex;
-  justify-content: space-between;
+  padding-left: 10px;
+  margin-left: 150px;
+  display: grid;
+  grid-template-columns: auto 1fr; 
   align-items: center;
 }
 
 .logo {
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-decoration: none;
-  letter-spacing: 1px;
+  height: 50px;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+  position: sticky;
+  left: 2rem;
+  z-index: 2;
+}
+
+.logo-image {
+  height: 100%;
+  width: auto;
+  max-width: 180px; 
 }
 
 nav {
   display: flex;
+  justify-content: end;
   gap: 2rem;
 }
 
 .nav-link {
   color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 500;
   position: relative;
   padding: 0.5rem 0;
@@ -93,16 +98,11 @@ nav {
   width: 100%;
 }
 
-.router-link-active {
-  color: #00c4ff;
-}
-
 .router-link-active::after {
   width: 100%;
 }
 
 .admin-link {
-  margin-left: 1rem;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   background: rgba(0, 196, 255, 0.1);
