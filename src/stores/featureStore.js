@@ -22,7 +22,7 @@ export const featureStore = defineStore('features', {  // 'features' is the stor
         title: 'Voice Feature',
         description: 'Add a siri/alexa like feature',
         upvotes: 9,
-        exists: false,
+        exists: true,
         comments: [
           { user: 'Admin', text: 'We think it is not necessary to have it.' }
         ]

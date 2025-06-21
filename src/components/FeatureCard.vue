@@ -1,6 +1,5 @@
 <template>
   <div class="feature-card">
-    <!-- usr profile -->
     <div class="card-top">
       <img class="profile-pic" src="@/assets/icons/profile-pic-icon.png"/>
       <div class="user-info">
@@ -16,8 +15,8 @@
       <button class="action-btn upvote" @click="upvote">
         👍 Upvote ({{ feature.upvotes }})
       </button>
-      <button class="action-btn comment">
-        💬 Comment
+      <button class="action-btn comment" @click="toggleComments">
+        💬 {{ showComments ? 'Hide Comments' : 'Show Comments' }}
       </button>
       <button class="action-btn delete">
         🗑️ Delete
@@ -26,14 +25,34 @@
     
     <div v-if="feature.exists" class="exists-badge">✓ Already Implemented</div>
     
-    <CommentSection 
-      :comments="feature.comments" 
-      @add-comment="addComment" 
-    />
+    <div v-if="adminComments.length" class="admin-comments">
+      <div class="comment-header">
+        <span class="admin-badge">ADMIN</span>
+        <h4>Official Responses</h4>
+      </div>
+      <div v-for="comment in adminComments" :key="comment.id" class="comment">
+        <p>{{ comment.text }}</p>
+      </div>
+    </div>
+    
+    <div v-if="showComments" class="user-comments">
+      <div v-if="userComments.length" class="comment-header">
+        <h4>User Comments ({{ userComments.length }})</h4>
+      </div>
+      <div v-for="comment in userComments" :key="comment.id" class="comment">
+        <strong>{{ comment.user }}:</strong>
+        <p>{{ comment.text }}</p>
+      </div>
+      
+      <CommentSection 
+        @add-comment="addComment" 
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
 import { featureStore } from '@/stores/featureStore';
 import CommentSection from './CommentSection.vue';
 
@@ -42,9 +61,22 @@ const props = defineProps({
 });
 
 const store = featureStore();
+const showComments = ref(false);
+
+const adminComments = computed(() =>                      // separate admin comments
+  props.feature.comments.filter(c => c.user === 'Admin')
+);
+
+const userComments = computed(() =>                        // separate user comments
+  props.feature.comments.filter(c => c.user !== 'Admin')
+);
 
 const upvote = () => {
   store.upvoteFeature(props.feature.id);
+};
+
+const toggleComments = () => {
+  showComments.value = !showComments.value;
 };
 
 const addComment = (comment) => {
@@ -65,7 +97,7 @@ const addComment = (comment) => {
 
 .feature-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  transform: translateY(-5px);
 }
 
 .card-top {
@@ -136,7 +168,7 @@ const addComment = (comment) => {
 
 .action-btn:hover {
   background: #e4e6e9;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .upvote {
@@ -163,5 +195,44 @@ const addComment = (comment) => {
   font-size: 0.85rem;
   font-weight: 500;
   margin-top: 0.5rem;
+}
+
+.admin-comments {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0f0ff;
+}
+
+.user-comments {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.admin-badge {
+  background: #1877f2;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.comment {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.comment p {
+  margin: 0.3rem 0 0;
 }
 </style>
