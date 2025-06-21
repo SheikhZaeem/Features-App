@@ -5,12 +5,26 @@ export const featureStore = defineStore('features', {  // 'features' is the stor
     features: [
       {
         id: 1,
+        name: 'Carl Spree',
+        username: 'CarlSpree31',
         title: 'Dark Mode',
-        description: 'Add a dark theme option',
+        description: 'Add a dark theme option as bright environment is too bad for eyes.',
         upvotes: 15,
         exists: false,
         comments: [
           { user: 'Admin', text: 'Already in Settings > Theme.' }
+        ]
+      },
+      {
+        id: 2,
+        Name: 'Mike Hat',
+        username: 'MikeHat19',
+        title: 'Voice Feature',
+        description: 'Add a siri/alexa like feature',
+        upvotes: 9,
+        exists: false,
+        comments: [
+          { user: 'Admin', text: 'We think it is not necessary to have it.' }
         ]
       }
     ]

@@ -34,6 +34,9 @@ const isAdmin = ref(true); //replae with real auth check later
   position: relative;
   padding: 1.5rem 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  filter: 
+  brightness(1.2) 
+  contrast(1.1); 
 }
 
 .header-content {
@@ -46,6 +49,7 @@ const isAdmin = ref(true); //replae with real auth check later
   display: grid;
   grid-template-columns: auto 1fr; 
   align-items: center;
+  
 }
 
 .logo {

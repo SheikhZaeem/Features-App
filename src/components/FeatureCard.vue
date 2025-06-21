@@ -1,5 +1,12 @@
 <template>
   <div class="feature-card">
+    <div class="card-top">
+      <img class="profile-pic" src="@/assets/icons/profile-pic-icon.png"/>
+      <div>
+        <h2>{{ feature.name }}</h2>
+        <h1>{{ feature.username }} </h1>
+      </div>
+    </div>
     <h3>{{ feature.title }}</h3>
     <p>{{ feature.description }}</p>
     <div class="meta">
@@ -45,7 +52,19 @@ const addComment = (comment) => {
   color: green;
   margin-left: 1rem;
 }
+
 .feature-button {
   margin-top: 20px;
+}
+
+.card-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 20px;
+}
+
+.profile-pic {
+  width: 40px;
 }
 </style>
