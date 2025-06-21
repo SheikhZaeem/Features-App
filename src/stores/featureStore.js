@@ -17,7 +17,7 @@ export const featureStore = defineStore('features', {  // 'features' is the stor
       },
       {
         id: 2,
-        Name: 'Mike Hat',
+        name: 'Mike Hat',
         username: 'MikeHat19',
         title: 'Voice Feature',
         description: 'Add a siri/alexa like feature',
