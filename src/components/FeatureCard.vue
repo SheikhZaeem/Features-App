@@ -15,7 +15,7 @@
       <button class="action-btn upvote" @click="upvote">
         👍 Upvote ({{ feature.upvotes }})
       </button>
-      <button class="action-btn comment" @click="toggleComments">
+      <button class="action-btn" @click="toggleComments">
         💬 {{ showComments ? 'Hide Comments' : 'Show Comments' }}
       </button>
       <button class="action-btn delete">
@@ -43,7 +43,6 @@
         <strong>{{ comment.user }}:</strong>
         <p>{{ comment.text }}</p>
       </div>
-      
       <CommentSection 
         @add-comment="addComment" 
       />
@@ -149,6 +148,7 @@ const addComment = (comment) => {
   display: flex;
   gap: 12px;
   margin: 1rem 0;
+  height: 55px;
 }
 
 .action-btn {
@@ -179,6 +179,7 @@ const addComment = (comment) => {
 .comment {
   background: #f0f4ff;
   color: #385898;
+  margin-bottom: 20px;
 }
 
 .delete {
@@ -213,7 +214,6 @@ const addComment = (comment) => {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 1rem;
 }
 
 .admin-badge {
@@ -229,7 +229,6 @@ const addComment = (comment) => {
   background: #f9f9f9;
   border-radius: 8px;
   padding: 0.8rem;
-  margin-bottom: 0.8rem;
 }
 
 .comment p {
