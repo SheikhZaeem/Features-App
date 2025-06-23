@@ -18,7 +18,7 @@
       <button class="action-btn" @click="toggleComments">
         💬 {{ showComments ? 'Hide Comments' : 'Show Comments' }}
       </button>
-      <button class="action-btn delete">
+      <button class="action-btn delete" @click="deleteFeature">
         🗑️ Delete
       </button>
     </div>
@@ -80,6 +80,11 @@ const toggleComments = () => {
 
 const addComment = (comment) => {
   store.addComment(props.feature.id, 'User', comment.text);
+};
+
+const deleteFeature = () => {
+  if (confirm('Are you sure you want to delete this feature?'))
+  store.delete(props.feature.id);
 };
 </script>
 

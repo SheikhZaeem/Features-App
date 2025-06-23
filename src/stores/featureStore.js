@@ -63,6 +63,18 @@ export const featureStore = defineStore('features', {  // 'features' is the stor
       if (feature) {
         feature.exists = true
       };
+    },
+    findFeatureIndex(id) {
+      return this.features.findIndex(feature => feature.id === id);
+    },
+    delete(id) {
+      const index = this.findFeatureIndex(id);
+      if (index !== -1) {
+        this.features.splice(index, 1);
+      }
+      else {
+        alert('Post not found');
+      }
     }
   }
 });
