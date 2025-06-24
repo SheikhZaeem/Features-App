@@ -3,26 +3,55 @@
     <div class="header-overlay"></div>
     <div class="header-content">
       <router-link to="/" class="logo">
-         <img 
+        <img 
           src="@/assets/icons/mobivisor-icon.png" 
           alt="Mobivisor" 
           class="logo-image"
         >
       </router-link>
       <nav>
-        <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/add" class="nav-link">Submit Feature</router-link>
-        <router-link to="/admin" class="nav-link admin-link" v-if="isAdmin">Admin</router-link>
-        <router-link to="/login" class="nav-link">Login</router-link>
+        <!-- when authenticated -->
+        <template v-if="isAuthenticated">
+          <router-link to="/" class="nav-link">Home</router-link>
+          <router-link to="/add" class="nav-link">Submit Feature</router-link>
+          <router-link 
+            to="/admin" 
+            class="nav-link admin-link" 
+            v-if="isAdmin"
+          >
+            Admin
+          </router-link>
+          <button @click="handleLogout" class="nav-link logout-button">
+            Logout
+          </button>
+          <span class="user-greeting">
+            Hi, {{ currentUser.username }}
+          </span>
+        </template>
+        <!-- when not authenticated -->
+        <template v-else>
+          <router-link to="/login" class="nav-link">Login</router-link>
+          <router-link to="/register" class="nav-link">Register</router-link>
+        </template>
       </nav>
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
+import { useAuth } from '@/services/auth';
+import { useRouter } from 'vue-router';
 
-const isAdmin = ref(true); //replae with real auth check later
+const { isAuthenticated, currentUser, logout } = useAuth();
+const router = useRouter();
+
+const isAdmin = computed(() => currentUser.value?.isAdmin || false);
+
+const handleLogout = () => {
+  logout();
+  router.push('/login');
+};
 </script>
 
 <style scoped>
@@ -116,5 +145,38 @@ nav {
 
 .admin-link:hover {
   background: rgba(0, 196, 255, 0.2);
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.user-greeting {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.logout-button:hover {
+  color: #00c4ff;
+}
+
+.logout-button::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #00c4ff;
+  transition: width 0.3s ease;
+}
+
+.logout-button:hover::after {
+  width: 100%;
 }
 </style>

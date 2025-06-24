@@ -44,9 +44,10 @@
             type="password"
             placeholder="Create a password"
             required
+            minlength="6"
             class="form-input"
           >
-          <p class="password-hint">Use at least 8 characters</p>
+          <p class="password-hint">Use at least 6 characters</p>
         </div>
         
         <button type="submit" class="register-button">
@@ -67,6 +68,7 @@ import { ref } from 'vue';
 const username = ref('');
 const email = ref('');
 const password = ref('');
+
 </script>
 
 <style scoped>

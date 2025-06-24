@@ -10,8 +10,11 @@
         <h1>Welcome Back</h1>
         <p>Please enter your credentials to log in</p>
       </div>
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
       
-      <form @submit.prevent="$emit('submit', { email, password })" class="login-form">
+      <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
           <label for="email">Email Address</label>
           <input
@@ -32,35 +35,45 @@
             type="password"
             placeholder="Enter your password"
             required
+            minlength="6"
             class="form-input"
           >
         </div>
-        <p v-if="!passwordCondition && password.length > 0" class="password-warning"> At least 6, first capital</p>
-        
-        <button type="submit" class="login-button" @click="userLogin">
+
+        <button type="submit" class="login-button">
           Log In
         </button>
       </form>
-      
+
       <div class="login-footer">
-        <p>Don't have an account? <router-link to="/Register">Sign up</router-link></p>
+        <p>Don't have an account? <router-link to="/register">Sign up</router-link></p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/services/auth'
 
-const email = ref('');
-const password = ref('');
+const { login } = useAuth()
+const router = useRouter()
+const email = ref('')
+const password = ref('')
+const error = ref('')
 
-const passwordCondition = computed(() => {
-  return password.value.length >= 6 && password.value.charAt(0) === password.value.charAt(0).toUpperCase();
-});
-
-
-
+const handleLogin = async () => {
+  try {
+    if (await login(email.value, password.value)) {
+      router.push('/')
+    } else {
+      error.value = 'Invalid email or password'
+    }
+  } catch (err) {
+    error.value = 'Login failed. Please try again later.'
+  }
+}
 </script>
 
 <style scoped>
@@ -169,4 +182,15 @@ const passwordCondition = computed(() => {
 .password-warning {
   color: red;
 }
+
+.error-message {
+  color: #e74c3c;
+  background-color: #fdecea;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
 </style>
