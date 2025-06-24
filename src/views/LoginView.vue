@@ -35,24 +35,32 @@
             class="form-input"
           >
         </div>
+        <p v-if="!passwordCondition && password.length > 0" class="password-warning"> At least 6, first capital</p>
         
-        <button type="submit" class="login-button">
+        <button type="submit" class="login-button" @click="userLogin">
           Log In
         </button>
       </form>
       
       <div class="login-footer">
-        <p>Don't have an account? <router-link to="/register">Sign up</router-link></p>
+        <p>Don't have an account? <router-link to="/Register">Sign up</router-link></p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const email = ref('');
 const password = ref('');
+
+const passwordCondition = computed(() => {
+  return password.value.length >= 6 && password.value.charAt(0) === password.value.charAt(0).toUpperCase();
+});
+
+
+
 </script>
 
 <style scoped>
@@ -156,5 +164,9 @@ const password = ref('');
 
 .login-footer a:hover {
   text-decoration: underline;
+}
+
+.password-warning {
+  color: red;
 }
 </style>

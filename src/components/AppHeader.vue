@@ -13,7 +13,7 @@
         <router-link to="/" class="nav-link">Home</router-link>
         <router-link to="/add" class="nav-link">Submit Feature</router-link>
         <router-link to="/admin" class="nav-link admin-link" v-if="isAdmin">Admin</router-link>
-        <router-link to="/login" class="nav-link login-link">Login</router-link>
+        <router-link to="/login" class="nav-link">Login</router-link>
       </nav>
     </div>
   </header>
