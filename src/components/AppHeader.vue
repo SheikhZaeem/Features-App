@@ -1,6 +1,5 @@
 <template>
   <header class="app-header">
-    <div class="header-overlay"></div>
     <div class="header-content">
       <router-link to="/" class="logo">
         <img 
@@ -10,7 +9,6 @@
         >
       </router-link>
       <nav>
-        <!-- when authenticated -->
         <template v-if="isAuthenticated">
           <router-link to="/" class="nav-link">Home</router-link>
           <router-link to="/add" class="nav-link">Submit Feature</router-link>
@@ -28,7 +26,6 @@
             Hi, {{ currentUser.username }}
           </span>
         </template>
-        <!-- when not authenticated -->
         <template v-else>
           <router-link to="/login" class="nav-link">Login</router-link>
           <router-link to="/register" class="nav-link">Register</router-link>

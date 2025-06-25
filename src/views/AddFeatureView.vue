@@ -35,10 +35,10 @@ const description = ref('');
 const store = featureStore();
 const router = useRouter();
 
-const submitFeature = () => {
-  store.addFeature({
+const submitFeature = async () => {
+  await store.addFeature({
     title: title.value,
-    description: description.value,
+    description: description.value
   });
   router.push('/');
 };

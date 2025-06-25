@@ -1,79 +1,79 @@
 import { defineStore } from 'pinia';
+import { useAuth } from '@/services/auth';
 
-export const featureStore = defineStore('features', {  // 'features' is the store ID
-  state: () => ({             // state is a function that returns the store's initial state.
-    features: [
-      {
-        id: 1,
-        name: 'Carl Spree',
-        username: 'CarlSpree31',
-        title: 'Dark Mode',
-        description: 'Add a dark theme option as bright environment is too bad for eyes.',
-        upvotes: 15,
-        exists: false,
-        comments: [
-          { user: 'Admin', text: 'Already in Settings > Theme.' }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Mike Hat',
-        username: 'MikeHat19',
-        title: 'Voice Feature',
-        description: 'Add a siri/alexa like feature',
-        upvotes: 9,
-        exists: true,
-        comments: [
-          { user: 'Admin', text: 'We think it is not necessary to have it.' }
-        ]
-      }
-    ]
+export const featureStore = defineStore('features', {
+  state: () => ({
+    features: []
   }),
-  actions: {                   // actions are functions that can change the state.
-    addFeature(feature) {
-      this.features.push({
-        id: Date.now(),
-        ...feature,
-        upvotes: 0,
-        exists: false,
-        comments: []
-      });
-    },
-    upvoteFeature(id) {
-      let feature = null;
-      for (let i = 0; i < this.features.length; i++) {
-        if (this.features[i].id === id) {
-          feature = this.features[i];
-          break;                        
-        }
+  actions: {
+    async fetchFeatures() {
+      try {
+        // fetching features and users separately
+        const featuresRes = await fetch('http://localhost:3000/features');
+        const features = await featuresRes.json();
+        
+        const usersRes = await fetch('http://localhost:3000/users');
+        const users = await usersRes.json();
+        // mapping user data to features
+        this.features = features.map(feature => {
+          const user = users.find(u => u.id === feature.userId.toString());
+          return {
+            ...feature,
+            name: user?.name || 'Unknown',
+            username: user?.username || 'unknown',
+            avatar: user?.avatar || '@/assets/icons/profile-pic-icon.png'
+          };
+        });
+      } catch (error) {
+        console.error('Failed to fetch features:', error);
       }
-      // SHORTCUT: const feature = this.features.find(f => f.id === id);
-      if (feature) {
-        feature.upvotes++
-      };
     },
-    addComment(id, user, text) {
-      const feature = this.features.find(f => f.id === id);
-      if (feature) {
-        feature.comments.push({ user, text })
-      };
-    },
-    markAsExists(id) {
-      const feature = this.features.find(f => f.id === id);
-      if (feature) {
-        feature.exists = true
-      };
-    },
-    findFeatureIndex(id) {
-      return this.features.findIndex(feature => feature.id === id);
-    },
-    delete(id) {
-      const index = this.findFeatureIndex(id);
-      if (index !== -1) {
-        this.features.splice(index, 1);
+    async addFeature(feature) {
+      try {
+        const auth = useAuth();
+        const userId = auth.currentUser.value?.id;
+        
+        if (!userId) throw new Error('User not authenticated');
+        await fetch('http://localhost:3000/features', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...feature,
+            userId: userId,
+            upvotes: 0,
+            exists: false,
+            createdAt: new Date().toISOString()
+          })
+        });
+        await this.fetchFeatures();
+      } catch (error) {
+        console.error('Failed to add feature:', error);
       }
-      else {
-        alert('Post not found');
+    },
+    async deleteFeature(id) {
+      try {
+        await fetch(`http://localhost:3000/features/${id}`, {
+          method: 'DELETE'
+        });
+        await this.fetchFeatures();
+      } catch (error) {
+        console.error('Failed to delete feature:', error);
+      }
+    },
+    async upvoteFeature(id) {
+      try {
+        const feature = this.features.find(f => f.id === id);
+        if (!feature) return;
+        
+        const newUpvotes = feature.upvotes + 1;
+        await fetch(`http://localhost:3000/features/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ upvotes: newUpvotes })
+        });
+        await this.fetchFeatures();
+      } catch (error) {
+        console.error('Failed to upvote feature:', error);
       }
     }
   }

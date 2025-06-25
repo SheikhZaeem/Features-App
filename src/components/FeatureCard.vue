@@ -18,9 +18,13 @@
       <button class="action-btn" @click="toggleComments">
         💬 {{ showComments ? 'Hide Comments' : 'Show Comments' }}
       </button>
-      <button class="action-btn delete" @click="deleteFeature">
-        🗑️ Delete
-      </button>
+      <button 
+        v-if="canDelete" 
+        class="action-btn delete" 
+        @click="deleteFeature"
+      >
+      🗑️ Delete
+    </button>
     </div>
     
     <div v-if="feature.exists" class="exists-badge">✓ Already Implemented</div>
@@ -51,41 +55,92 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { featureStore } from '@/stores/featureStore';
+import { useAuth } from '@/services/auth';
 import CommentSection from './CommentSection.vue';
 
+const { currentUser } = useAuth();
 const props = defineProps({
   feature: Object,
 });
 
 const store = featureStore();
 const showComments = ref(false);
+const userComments = ref([]);
+const adminComments = ref([]);
 
-const adminComments = computed(() =>                      // separate admin comments
-  props.feature.comments.filter(c => c.user === 'Admin')
-);
 
-const userComments = computed(() =>                        // separate user comments
-  props.feature.comments.filter(c => c.user !== 'Admin')
-);
-
-const upvote = () => {
-  store.upvoteFeature(props.feature.id);
+const upvote = async () => {
+  await store.upvoteFeature(props.feature.id);
 };
 
-const toggleComments = () => {
+const deleteFeature = async () => {
+  if (confirm('Are you sure you want to delete this feature?')) {
+    await store.deleteFeature(props.feature.id);
+  }
+};
+
+const fetchComments = async () => {
+  try {
+    const response = await fetch(`http://localhost:3000/comments?featureId=${props.feature.id}`);
+    const comments = await response.json();
+    
+    const usersRes = await fetch('http://localhost:3000/users');
+    const users = await usersRes.json();
+    
+    userComments.value = comments
+      .filter(comment => !comment.isAdmin)
+      .map(comment => ({
+        ...comment,
+        user: users.find(u => u.id === comment.userId.toString())?.username || 'Unknown'
+      }));
+    
+    adminComments.value = comments
+      .filter(comment => comment.isAdmin)
+      .map(comment => ({
+        ...comment,
+        user: users.find(u => u.id === comment.userId.toString())?.name || 'Admin'
+      }));
+  } catch (error) {
+    console.error('Failed to fetch comments:', error);
+  }
+};
+
+const toggleComments = async () => {
   showComments.value = !showComments.value;
+  if (showComments.value && userComments.value.length === 0) {
+    await fetchComments();
+  }
 };
 
-const addComment = (comment) => {
-  store.addComment(props.feature.id, 'User', comment.text);
+const addComment = async (commentData) => {
+  try {
+    const auth = useAuth();
+    const userId = auth.currentUser.value?.id;
+    
+    await fetch('http://localhost:3000/comments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...commentData,
+        featureId: props.feature.id,
+        userId: userId,
+        isAdmin: auth.currentUser.value?.isAdmin || false,
+        createdAt: new Date().toISOString()
+      })
+    });
+    await fetchComments();
+  } catch (error) {
+    console.error('Failed to add comment:', error);
+  }
 };
 
-const deleteFeature = () => {
-  if (confirm('Are you sure you want to delete this feature?'))
-  store.delete(props.feature.id);
-};
+// to include admin check
+const canDelete = computed(() => {
+  return currentUser.value?.id === props.feature.userId || currentUser.value?.isAdmin;
+});
+
 </script>
 
 <style scoped>

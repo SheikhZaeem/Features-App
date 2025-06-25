@@ -42,19 +42,23 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const { isAuthenticated, currentUser } = useAuth();
   
-  // cheking if route requires authentication
+  if (isAuthenticated.value && (to.path === '/login' || to.path === '/register')) {
+    next('/');
+    return;
+  }
+
+  // checking authentication
   if (to.meta.requiresAuth && !isAuthenticated.value) {
     next('/login');
     return;
   }
 
-  // checking if route requires admin privileges
+  // checking admin privileges
   if (to.meta.requiresAdmin && !currentUser.value?.isAdmin) {
-    next('/'); // or to a 'not-authorized' page
+    next('/');
     return;
   }
 
-  // If all checks pass
   next();
 });
 

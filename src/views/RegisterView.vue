@@ -11,7 +11,18 @@
         <p>Join our community of feature requesters</p>
       </div>
       
-      <form @submit.prevent="$emit('submit', { username, email, password })" class="register-form">
+      <form @submit.prevent="handleRegister" class="register-form"> 
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input
+            id="fullName"
+            v-model="fullName"
+            type="text"
+            placeholder="Enter your full name"
+            required
+            class="form-input"
+          >
+        </div>
         <div class="form-group">
           <label for="username">Username</label>
           <input
@@ -23,7 +34,6 @@
             class="form-input"
           >
         </div>
-        
         <div class="form-group">
           <label for="email">Email Address</label>
           <input
@@ -35,7 +45,6 @@
             class="form-input"
           >
         </div>
-        
         <div class="form-group">
           <label for="password">Password</label>
           <input
@@ -64,13 +73,47 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuth } from '@/services/auth';
 
+const fullName = ref('');
 const username = ref('');
 const email = ref('');
 const password = ref('');
+const router = useRouter();
+const { login } = useAuth();
+
+const handleRegister = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: fullName.value, 
+        username: username.value,
+        email: email.value,
+        password: password.value,
+        isAdmin: false,
+        features: [],
+        avatar: `https://i.pravatar.cc/150?u=${email.value}`
+      })
+    });
+    
+    if (!response.ok) throw new Error('Registration failed');
+    
+    // autologin after regis
+    if (await login(email.value, password.value)) {
+      router.push('/');
+    } else {
+      throw new Error('Auto-login failed');
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    alert('Registration failed. Please try again.');
+  }
+};
 
 </script>
-
 <style scoped>
 .register-container {
   display: flex;
