@@ -60,7 +60,7 @@
       "id": "1",
       "title": "Dark Mode",
       "description": "Add a dark theme option for better nighttime viewing",
-      "upvotes": 24,
+      "upvotes": 0,
       "exists": false,
       "userId": "1",
       "createdAt": "2023-08-15T09:30:00Z"
@@ -69,7 +69,7 @@
       "id": "2",
       "title": "Voice Commands",
       "description": "Implement voice control for hands-free navigation",
-      "upvotes": 43,
+      "upvotes": 0,
       "exists": true,
       "userId": "2",
       "createdAt": "2023-08-18T14:22:00Z"
@@ -78,7 +78,7 @@
       "id": "3",
       "title": "PDF Export",
       "description": "Add option to export feature lists as PDF files",
-      "upvotes": 18,
+      "upvotes": 0,
       "exists": false,
       "userId": "1",
       "createdAt": "2023-08-20T11:05:00Z"
@@ -168,6 +168,22 @@
       "userId": "3",
       "isAdmin": false,
       "createdAt": "2025-06-25T15:35:39.668Z"
+    },
+    {
+      "id": "6113",
+      "text": "yeh che puzz wanan",
+      "featureId": "39e6",
+      "userId": "fca3",
+      "isAdmin": false,
+      "createdAt": "2025-06-25T18:54:51.720Z"
+    },
+    {
+      "id": "bdc8",
+      "text": "f",
+      "featureId": "39e6",
+      "userId": "1",
+      "isAdmin": false,
+      "createdAt": "2025-06-26T09:37:22.144Z"
     }
   ]
 }

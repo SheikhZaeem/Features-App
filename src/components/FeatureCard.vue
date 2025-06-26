@@ -70,9 +70,16 @@ const showComments = ref(false);
 const userComments = ref([]);
 const adminComments = ref([]);
 
-
 const upvote = async () => {
-  await store.upvoteFeature(props.feature.id);
+  const originalUpvotes = props.feature.upvotes;
+  props.feature.upvotes += 1;   
+  
+  try {
+    await store.upvoteFeature(props.feature.id, originalUpvotes);
+  } catch (error) {
+    props.feature.upvotes = originalUpvotes; // revert if error
+    console.error('Failed to upvote:', error);
+  }
 };
 
 const deleteFeature = async () => {

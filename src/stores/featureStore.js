@@ -60,20 +60,17 @@ export const featureStore = defineStore('features', {
         console.error('Failed to delete feature:', error);
       }
     },
-    async upvoteFeature(id) {
+    async upvoteFeature(id, currentUpvotes) {
       try {
-        const feature = this.features.find(f => f.id === id);
-        if (!feature) return;
-        
-        const newUpvotes = feature.upvotes + 1;
+        const newUpvotes = currentUpvotes + 1;
         await fetch(`http://localhost:3000/features/${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ upvotes: newUpvotes })
         });
-        await this.fetchFeatures();
       } catch (error) {
         console.error('Failed to upvote feature:', error);
+        throw error;
       }
     }
   }

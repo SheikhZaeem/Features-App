@@ -24,6 +24,7 @@ const newComment = ref('');
 const emit = defineEmits(['add-comment']);
 
 const addComment = () => {
+  
   if (newComment.value.trim()) {
     emit('add-comment', {
       text: newComment.value,
