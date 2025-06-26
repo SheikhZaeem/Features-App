@@ -71,13 +71,25 @@ const userComments = ref([]);
 const adminComments = ref([]);
 
 const upvote = async () => {
+  if (!currentUser.value) return;
+
+  // chcking if user already upvoted
+  if (props.feature.upvotedBy?.includes(currentUser.value.id)) {
+    alert('You already upvoted this feature!');
+    return;
+  }
+
   const originalUpvotes = props.feature.upvotes;
-  props.feature.upvotes += 1;   
+  const originalUpvotedBy = [...(props.feature.upvotedBy || [])];
+  props.feature.upvotes += 1;
+  props.feature.upvotedBy = [...originalUpvotedBy, currentUser.value.id];
   
   try {
-    await store.upvoteFeature(props.feature.id, originalUpvotes);
+    await store.upvoteFeature(props.feature.id, currentUser.value.id);
   } catch (error) {
-    props.feature.upvotes = originalUpvotes; // revert if error
+    // revrting on error
+    props.feature.upvotes = originalUpvotes;
+    props.feature.upvotedBy = originalUpvotedBy;
     console.error('Failed to upvote:', error);
   }
 };
@@ -142,7 +154,6 @@ const addComment = async (commentData) => {
     console.error('Failed to add comment:', error);
   }
 };
-
 // to include admin check
 const canDelete = computed(() => {
   return currentUser.value?.id === props.feature.userId || currentUser.value?.isAdmin;

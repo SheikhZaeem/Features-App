@@ -53,6 +53,16 @@
       "isAdmin": false,
       "features": [],
       "avatar": "https://i.pravatar.cc/150?u=banday@cat.com"
+    },
+    {
+      "id": "7272",
+      "name": "Benn Hour",
+      "username": "bentenson11",
+      "email": "ben@ten.com",
+      "password": "bilkent",
+      "isAdmin": false,
+      "features": [],
+      "avatar": "https://i.pravatar.cc/150?u=ben@ten.com"
     }
   ],
   "features": [
@@ -60,28 +70,39 @@
       "id": "1",
       "title": "Dark Mode",
       "description": "Add a dark theme option for better nighttime viewing",
-      "upvotes": 0,
+      "upvotes": 2,
       "exists": false,
       "userId": "1",
-      "createdAt": "2023-08-15T09:30:00Z"
+      "createdAt": "2023-08-15T09:30:00Z",
+      "upvotedBy": [
+        "1",
+        "7272"
+      ]
     },
     {
       "id": "2",
       "title": "Voice Commands",
       "description": "Implement voice control for hands-free navigation",
-      "upvotes": 0,
+      "upvotes": 2,
       "exists": true,
       "userId": "2",
-      "createdAt": "2023-08-18T14:22:00Z"
+      "createdAt": "2023-08-18T14:22:00Z",
+      "upvotedBy": [
+        "1",
+        "7272"
+      ]
     },
     {
       "id": "3",
       "title": "PDF Export",
       "description": "Add option to export feature lists as PDF files",
-      "upvotes": 0,
+      "upvotes": 1,
       "exists": false,
       "userId": "1",
-      "createdAt": "2023-08-20T11:05:00Z"
+      "createdAt": "2023-08-20T11:05:00Z",
+      "upvotedBy": [
+        "1"
+      ]
     },
     {
       "id": "f980",
@@ -90,7 +111,8 @@
       "userId": "1",
       "upvotes": 0,
       "exists": false,
-      "createdAt": "2025-06-25T15:32:15.852Z"
+      "createdAt": "2025-06-25T15:32:15.852Z",
+      "upvotedBy": []
     },
     {
       "id": "39e6",
@@ -99,7 +121,8 @@
       "userId": "3",
       "upvotes": 0,
       "exists": false,
-      "createdAt": "2025-06-25T15:34:27.470Z"
+      "createdAt": "2025-06-25T15:34:27.470Z",
+      "upvotedBy": []
     },
     {
       "id": "83e2",
@@ -108,7 +131,8 @@
       "userId": "32a8",
       "upvotes": 0,
       "exists": false,
-      "createdAt": "2025-06-25T16:26:16.043Z"
+      "createdAt": "2025-06-25T16:26:16.043Z",
+      "upvotedBy": []
     },
     {
       "id": "183c",
@@ -117,7 +141,20 @@
       "userId": "fca3",
       "upvotes": 0,
       "exists": false,
-      "createdAt": "2025-06-25T16:30:15.761Z"
+      "createdAt": "2025-06-25T16:30:15.761Z",
+      "upvotedBy": []
+    },
+    {
+      "id": "0701",
+      "title": "Music App",
+      "description": "There should be a common music app where we can listen the recommended music from other users. ",
+      "userId": "7272",
+      "upvotes": 1,
+      "exists": false,
+      "createdAt": "2025-06-26T11:00:53.536Z",
+      "upvotedBy": [
+        "7272"
+      ]
     }
   ],
   "comments": [
@@ -184,6 +221,14 @@
       "userId": "1",
       "isAdmin": false,
       "createdAt": "2025-06-26T09:37:22.144Z"
+    },
+    {
+      "id": "bfb8",
+      "text": "reply fast please",
+      "featureId": "0701",
+      "userId": "7272",
+      "isAdmin": false,
+      "createdAt": "2025-06-26T11:01:05.034Z"
     }
   ]
 }
