@@ -108,9 +108,9 @@ export const featureStore = defineStore('features', {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedData)
         });
-        
         if (!response.ok) throw new Error('Update failed');
         
+        // update local state
         const index = this.features.findIndex(f => f.id === id);
         if (index !== -1) {
           this.features[index] = { 

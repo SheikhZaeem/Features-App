@@ -3,18 +3,48 @@
     class="feature-card"
     :class="{ 
       'selected-for-merge': isSelected,
-      'merge-mode': mergeMode 
+      'merge-mode': mergeMode,
+      'merged-feature': feature.mergedFrom
     }"
     @click="handleCardClick"
   >
-    <div class="card-top">
-      <img class="profile-pic" src="@/assets/icons/profile-pic-icon.png"/>
-      <div class="user-info">
-        <div class="name">{{ feature.name }}</div>
-        <div class="username">@{{ feature.username }}</div>
-      </div>
+    <div v-if="feature.mergedFrom" class="merged-badge">
+      🔀 Merged from {{ feature.mergedFrom.length }} feature requests
     </div>
     
+    <div class="card-top">
+
+      <template v-if="feature.mergedFrom">
+        <img 
+          v-for="user in mergedUsers" 
+          :key="user.id"
+          class="profile-pic merged-avatar"
+          :src="user.avatar || '@/assets/icons/profile-pic-icon.png'"
+        />
+      </template>
+      <img 
+        v-else
+        class="profile-pic" 
+        :src="feature.avatar || '@/assets/icons/profile-pic-icon.png'"
+      />
+      
+      <div class="user-info">
+        <div v-if="feature.mergedFrom" class="name">
+          {{ mergedUsers.map(u => u.name).join(', ') }}
+        </div>
+        <div v-else class="name">{{ feature.name }}</div>
+        
+        <div class="username">
+          <template v-if="feature.mergedFrom">
+            @{{ mergedUsers.map(u => u.username).join(', @') }}
+          </template>
+          <template v-else>
+            @{{ feature.username }}
+          </template>
+        </div>
+      </div>
+    </div>
+
     <h3 class="title">{{ feature.title }}</h3>
     <p class="description">{{ feature.description }}</p>
     
@@ -186,6 +216,29 @@ const addComment = async (commentData) => {
     console.error('Failed to add comment:', error);
   }
 };
+
+const mergedUsers = computed(() => {
+  if (!props.feature.mergedFrom) return [];
+  
+  const uniqueUsers = [];
+  const seenIds = new Set();
+  
+  for (const user of props.feature.mergedFrom) {
+    if (!seenIds.has(user.userId)) {
+      uniqueUsers.push({
+        id: user.userId,
+        name: user.name,
+        username: user.username,
+        avatar: user.avatar
+      });
+      seenIds.add(user.userId);
+    }
+  }
+  
+  return uniqueUsers;
+});
+
+
 // to include admin check
 const canDelete = computed(() => {
   return currentUser.value?.id === props.feature.userId || currentUser.value?.isAdmin;
@@ -363,4 +416,27 @@ const canDelete = computed(() => {
 .action-buttons > * {
   pointer-events: auto;
 }
+
+.merged-badge {
+  background-color: #e6f7ff;
+  color: #0073e6;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.merged-feature {
+  border-left: 4px solid #0073e6;
+}
+/* style for multiple avatars */
+.merged-avatar {
+  width: 36px;
+  height: 36px;
+  margin-right: -10px;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #e1e4e8;
+}
+
 </style>

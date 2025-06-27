@@ -63,33 +63,47 @@
       "isAdmin": false,
       "features": [],
       "avatar": "https://i.pravatar.cc/150?u=ben@ten.com"
+    },
+    {
+      "id": "a812",
+      "name": "Sir Goon",
+      "username": "sir312",
+      "email": "sir@gmail.com",
+      "password": "test123",
+      "isAdmin": false,
+      "features": [],
+      "avatar": "https://i.pravatar.cc/150?u=sir@gmail.com"
     }
   ],
   "features": [
     {
-      "id": "1",
-      "title": "Dark Mode",
-      "description": "Add a dark theme option for better nighttime viewing",
-      "upvotes": 2,
-      "exists": false,
-      "userId": "1",
-      "createdAt": "2023-08-15T09:30:00Z",
-      "upvotedBy": [
-        "1",
-        "7272"
-      ]
-    },
-    {
       "id": "2",
       "title": "Voice Commands",
-      "description": "Implement voice control for hands-free navigation",
-      "upvotes": 2,
+      "description": "## Merged from multiple feature requests:\n\n- **Dark Mode** (by @CarlSpree31)\n- **Voice Commands** (by @EmmaDev)\n\n---\n\nAdd a dark theme option for better nighttime viewing\n\n---\n\nImplement voice control for hands-free navigation",
+      "upvotes": 4,
       "exists": true,
       "userId": "2",
       "createdAt": "2023-08-18T14:22:00Z",
       "upvotedBy": [
         "1",
         "7272"
+      ],
+      "name": "Emma Johnson",
+      "username": "EmmaDev",
+      "avatar": "https://randomuser.me/api/portraits/women/44.jpg",
+      "mergedFrom": [
+        {
+          "id": "1",
+          "userId": "1",
+          "username": "CarlSpree31",
+          "name": "Carl Spree"
+        },
+        {
+          "id": "2",
+          "userId": "2",
+          "username": "EmmaDev",
+          "name": "Emma Johnson"
+        }
       ]
     },
     {
@@ -140,20 +154,33 @@
       "createdAt": "2025-06-27T09:37:07.067Z"
     },
     {
-      "id": "ea7c",
-      "title": "more",
-      "description": "more",
+      "id": "0a21",
+      "title": "Doodle Moodle",
+      "description": "Add doodle moddle game please",
       "userId": "1",
+      "upvotes": 2,
+      "exists": false,
+      "createdAt": "2025-06-27T19:42:49.396Z",
+      "upvotedBy": [
+        "1",
+        "2"
+      ]
+    },
+    {
+      "id": "a167",
+      "title": "Sir Test",
+      "description": "I am sir",
+      "userId": "a812",
       "upvotes": 0,
       "exists": false,
-      "createdAt": "2025-06-27T11:09:31.188Z"
+      "createdAt": "2025-06-27T19:43:38.232Z"
     }
   ],
   "comments": [
     {
       "id": "1",
       "text": "This would be really helpful for our team!",
-      "featureId": "1",
+      "featureId": null,
       "userId": "3",
       "isAdmin": false,
       "createdAt": "2023-08-16T10:15:00Z"
@@ -161,7 +188,7 @@
     {
       "id": "2",
       "text": "We've added this to our Q4 roadmap",
-      "featureId": "1",
+      "featureId": null,
       "userId": "2",
       "isAdmin": true,
       "createdAt": "2023-08-17T16:40:00Z"
@@ -217,7 +244,7 @@
     {
       "id": "8583",
       "text": "ok",
-      "featureId": "1",
+      "featureId": null,
       "userId": "2",
       "isAdmin": true,
       "createdAt": "2025-06-27T09:34:42.212Z"
@@ -229,6 +256,30 @@
       "userId": "1",
       "isAdmin": false,
       "createdAt": "2025-06-27T09:39:09.479Z"
+    },
+    {
+      "id": "56ee",
+      "text": "wow\n",
+      "featureId": "2",
+      "userId": "1",
+      "isAdmin": false,
+      "createdAt": "2025-06-27T19:42:25.745Z"
+    },
+    {
+      "id": "3264",
+      "text": "what do you mean bro?",
+      "featureId": "0a21",
+      "userId": "a812",
+      "isAdmin": false,
+      "createdAt": "2025-06-27T19:43:52.683Z"
+    },
+    {
+      "id": "b6b8",
+      "text": "Can you explain further...",
+      "featureId": "0a21",
+      "userId": "2",
+      "isAdmin": true,
+      "createdAt": "2025-06-27T19:46:02.884Z"
     }
   ]
 }

@@ -85,37 +85,47 @@ const cancelMerge = () => {
 };
 
 const confirmMerge = async () => {
-  if (mergeMode.value.selected.length !== 2) return;
-  
-  const [feature1Id, feature2Id] = mergeMode.value.selected;
+  if (mergeMode.value.selected.length < 2) return;
   
   try {
-    // find features to merge
-    const feature1 = store.features.find(f => f.id === feature1Id);
-    const feature2 = store.features.find(f => f.id === feature2Id);
+    const featuresToMerge = mergeMode.value.selected.map(id => 
+      store.features.find(f => f.id === id)
+    ).filter(Boolean);
     
-    if (!feature1 || !feature2) return;
+    if (featuresToMerge.length < 2) return;
+
+    const keptFeature = featuresToMerge.reduce((prev, current) => 
+      prev.upvotes > current.upvotes ? prev : current
+    );
     
-    const keepId = feature1.upvotes >= feature2.upvotes ? feature1Id : feature2Id;
-    const removeId = keepId === feature1Id ? feature2Id : feature1Id;
+    const removedFeatures = featuresToMerge.filter(f => f.id !== keptFeature.id);
     
-    // combine features
+    // create merged feature data
     const mergedFeature = {
-      ...store.features.find(f => f.id === keepId),
-      title: `${feature1.title} / ${feature2.title}`,
-      description: `${feature1.description}\n\n---\n\n${feature2.description}`,
-      upvotes: feature1.upvotes + feature2.upvotes,
-      upvotedBy: [...new Set([
-        ...(feature1.upvotedBy || []),
-        ...(feature2.upvotedBy || [])
-      ])]
+      ...keptFeature,
+      title: keptFeature.title,
+      description: `## Merged from multiple feature requests:\n\n${
+        featuresToMerge.map(f => `- **${f.title}** (by @${f.username})`).join('\n')
+      }\n\n---\n\n${featuresToMerge.map(f => f.description).join('\n\n---\n\n')}`,
+      upvotes: featuresToMerge.reduce((sum, f) => sum + f.upvotes, 0),
+      upvotedBy: [...new Set(
+        featuresToMerge.flatMap(f => f.upvotedBy || [])
+      )],
+      mergedFrom: featuresToMerge.map(f => ({
+        id: f.id,
+        userId: f.userId,
+        username: f.username,
+        name: f.name
+      }))
     };
-    
-    await store.updateFeature(keepId, mergedFeature);
-    await store.deleteFeature(removeId);
+    await store.updateFeature(keptFeature.id, mergedFeature);
+
+    await Promise.all(
+      removedFeatures.map(f => store.deleteFeature(f.id))
+    );
     cancelMerge();
     
-    alert('Features merged successfully!');
+    alert(`Merged ${featuresToMerge.length} features successfully!`);
   } catch (err) {
     console.error('Merge failed:', err);
     alert('Failed to merge features');
