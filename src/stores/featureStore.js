@@ -50,17 +50,17 @@ export const featureStore = defineStore('features', {
         console.error('Failed to add feature:', error);
       }
     },
-     async deleteFeature(id) {
-    try {
-      await fetch(`http://localhost:3000/features/${id}`, {
-        method: 'DELETE'
-      });
-      this.features = this.features.filter(f => f.id !== id);
-    } catch (error) {
-      console.error('Failed to delete feature:', error);
-      throw error;
-    }
-  },
+    async deleteFeature(id) {
+      try {
+        await fetch(`http://localhost:3000/features/${id}`, {
+          method: 'DELETE'
+        });
+        this.features = this.features.filter(f => f.id !== id);
+        } catch (error) {
+          console.error('Failed to delete feature:', error);
+          throw error;
+        }
+      },
     async upvoteFeature(featureId, userId) {
       try {
         const featureRes = await fetch(`http://localhost:3000/features/${featureId}`);
@@ -80,6 +80,41 @@ export const featureStore = defineStore('features', {
         });
       } catch (error) {
         console.error('Failed to upvote feature:', error);
+        throw error;
+      }
+    },
+    async markAsExists(id) {
+      try {
+        await fetch(`http://localhost:3000/features/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exists: true })
+        });
+      
+        const feature = this.features.find(f => f.id === id);
+        if (feature) {
+          feature.exists = true;
+        }
+      } catch (error) {
+        console.error('Failed to mark as implemented:', error);
+        throw error;
+      }
+    },
+    async updateFeature(id, updatedData) {
+      try {
+        const response = await fetch(`http://localhost:3000/features/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedData)
+        });
+        if (!response.ok) throw new Error('Update failed');
+        const index = this.features.findIndex(f => f.id === id);
+        
+        if (index !== -1) {
+          this.features[index] = { ...this.features[index], ...updatedData };
+        }
+      } catch (error) {
+        console.error('Failed to update feature:', error);
         throw error;
       }
     }

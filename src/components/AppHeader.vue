@@ -9,25 +9,25 @@
         >
       </router-link>
       <nav>
-        <!-- if logged in -->
         <template v-if="isAuthenticated">
           <router-link to="/" class="nav-link">Home</router-link>
-          <router-link to="/add" class="nav-link">Submit Feature</router-link>
           <router-link 
-            to="/admin" 
-            class="nav-link admin-link" 
-            v-if="isAdmin"
+            to="/add" 
+            class="nav-link" 
+            v-if="!isAdmin"
           >
-            Admin
+            Submit Feature
           </router-link>
+          <div class="user-info">
+            <span class="user-greeting">
+              Hi, {{ currentUser.username }}
+            </span>
+            <span v-if="isAdmin" class="admin-badge">ADMIN</span>
+          </div>
           <button @click="handleLogout" class="nav-link logout-button">
             Logout
           </button>
-          <span class="user-greeting">
-            Hi, {{ currentUser.username }}
-          </span>
         </template>
-        <!-- if not logged-->
         <template v-else>
           <router-link to="/login" class="nav-link">Login</router-link>
           <router-link to="/register" class="nav-link">Register</router-link>
@@ -98,7 +98,7 @@ const handleLogout = () => {
 
 nav {
   display: flex;
-  justify-content: end;
+  justify-content: end; 
   gap: 2rem;
 }
 
@@ -178,4 +178,22 @@ nav {
 .logout-button:hover::after {
   width: 100%;
 }
+
+.admin-badge {
+  background: #1877f2;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+}
+
+/* Update user-info styles */
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+}
+
 </style>

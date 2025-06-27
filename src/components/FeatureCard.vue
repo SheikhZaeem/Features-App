@@ -1,5 +1,11 @@
 <template>
-  <div class="feature-card">
+  <div 
+    class="feature-card"
+    :class="{ 
+      'selected-for-merge': isSelected,
+      'merge-mode': mergeMode 
+    }"
+  >
     <div class="card-top">
       <img class="profile-pic" src="@/assets/icons/profile-pic-icon.png"/>
       <div class="user-info">
@@ -18,13 +24,31 @@
       <button class="action-btn" @click="toggleComments">
         💬 {{ showComments ? 'Hide Comments' : 'Show Comments' }}
       </button>
+      
+      <!-- Admin actions -->
+      <template v-if="isAdmin">
+        <button 
+          v-if="!feature.exists"
+          class="action-btn"
+          @click="markAsImplemented"
+        >
+          ✓ Mark Implemented
+        </button>
+        <button 
+          class="action-btn merge-btn"
+          @click="selectForMerge"
+        >
+          🔄 Merge
+        </button>
+      </template>
+      
       <button 
         v-if="canDelete" 
         class="action-btn delete" 
         @click="deleteFeature"
       >
-      🗑️ Delete
-    </button>
+        🗑️ Delete
+      </button>
     </div>
     
     <div v-if="feature.exists" class="exists-badge">✓ Already Implemented</div>
@@ -69,6 +93,19 @@ const store = featureStore();
 const showComments = ref(false);
 const userComments = ref([]);
 const adminComments = ref([]);
+const emit = defineEmits(['select-for-merge']);
+
+const isAdmin = computed(() => currentUser.value?.isAdmin || false);
+
+const markAsImplemented = async () => {
+  await store.markAsExists(props.feature.id);
+};
+
+const selectForMerge = () => {
+  if (props.mergeMode) {
+    emit('select-for-merge', props.feature.id);
+  }
+};
 
 const upvote = async () => {
   if (!currentUser.value) return;
@@ -312,4 +349,25 @@ const canDelete = computed(() => {
 .comment p {
   margin: 0.3rem 0 0;
 }
+
+.feature-card.merge-mode {
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.feature-card.merge-mode:hover {
+  border-color: #1877f2;
+}
+
+.feature-card.selected-for-merge {
+  border: 2px solid #1877f2;
+  background-color: #f0f7ff;
+}
+
+.merge-btn {
+  background-color: #e6f7ff;
+  color: #0073e6;
+}
+
 </style>

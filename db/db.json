@@ -97,7 +97,7 @@
       "title": "PDF Export",
       "description": "Add option to export feature lists as PDF files",
       "upvotes": 1,
-      "exists": false,
+      "exists": true,
       "userId": "1",
       "createdAt": "2023-08-20T11:05:00Z",
       "upvotedBy": [
@@ -110,7 +110,7 @@
       "description": "A not so addictive game should be provided which can be played to decrease the stress due to the work.",
       "userId": "1",
       "upvotes": 0,
-      "exists": false,
+      "exists": true,
       "createdAt": "2025-06-25T15:32:15.852Z",
       "upvotedBy": []
     },
@@ -137,16 +137,13 @@
       "upvotedBy": []
     },
     {
-      "id": "0701",
-      "title": "Music App",
-      "description": "There should be a common music app where we can listen the recommended music from other users. ",
-      "userId": "7272",
-      "upvotes": 1,
+      "id": "8ce6",
+      "title": "Reading Mode",
+      "description": "An app where we can download books or articles and read. ",
+      "userId": "1",
+      "upvotes": 0,
       "exists": false,
-      "createdAt": "2025-06-26T11:00:53.536Z",
-      "upvotedBy": [
-        "7272"
-      ]
+      "createdAt": "2025-06-27T09:37:07.067Z"
     }
   ],
   "comments": [
@@ -215,12 +212,20 @@
       "createdAt": "2025-06-26T09:37:22.144Z"
     },
     {
-      "id": "bfb8",
-      "text": "reply fast please",
-      "featureId": "0701",
-      "userId": "7272",
+      "id": "8583",
+      "text": "ok",
+      "featureId": "1",
+      "userId": "2",
+      "isAdmin": true,
+      "createdAt": "2025-06-27T09:34:42.212Z"
+    },
+    {
+      "id": "5304",
+      "text": "nice implementented damn",
+      "featureId": "2",
+      "userId": "1",
       "isAdmin": false,
-      "createdAt": "2025-06-26T11:01:05.034Z"
+      "createdAt": "2025-06-27T09:39:09.479Z"
     }
   ]
 }

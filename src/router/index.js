@@ -46,13 +46,11 @@ router.beforeEach(async (to, from, next) => {
     next('/');
     return;
   }
-
   // checking authentication
   if (to.meta.requiresAuth && !isAuthenticated.value) {
     next('/login');
     return;
   }
-
   // checking admin privileges
   if (to.meta.requiresAdmin && !currentUser.value?.isAdmin) {
     next('/');
