@@ -90,7 +90,7 @@ export const featureStore = defineStore('features', {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ exists: true })
         });
-      
+        
         const feature = this.features.find(f => f.id === id);
         if (feature) {
           feature.exists = true;
@@ -100,18 +100,23 @@ export const featureStore = defineStore('features', {
         throw error;
       }
     },
+  
     async updateFeature(id, updatedData) {
       try {
         const response = await fetch(`http://localhost:3000/features/${id}`, {
-          method: 'PUT',
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedData)
         });
-        if (!response.ok) throw new Error('Update failed');
-        const index = this.features.findIndex(f => f.id === id);
         
+        if (!response.ok) throw new Error('Update failed');
+        
+        const index = this.features.findIndex(f => f.id === id);
         if (index !== -1) {
-          this.features[index] = { ...this.features[index], ...updatedData };
+          this.features[index] = { 
+            ...this.features[index], 
+            ...updatedData 
+          };
         }
       } catch (error) {
         console.error('Failed to update feature:', error);

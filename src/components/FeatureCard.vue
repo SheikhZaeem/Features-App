@@ -5,6 +5,7 @@
       'selected-for-merge': isSelected,
       'merge-mode': mergeMode 
     }"
+    @click="handleCardClick"
   >
     <div class="card-top">
       <img class="profile-pic" src="@/assets/icons/profile-pic-icon.png"/>
@@ -25,27 +26,18 @@
         💬 {{ showComments ? 'Hide Comments' : 'Show Comments' }}
       </button>
       
-      <!-- Admin actions -->
-      <template v-if="isAdmin">
-        <button 
-          v-if="!feature.exists"
-          class="action-btn"
-          @click="markAsImplemented"
-        >
-          ✓ Mark Implemented
-        </button>
-        <button 
-          class="action-btn merge-btn"
-          @click="selectForMerge"
-        >
-          🔄 Merge
-        </button>
-      </template>
+      <button 
+        v-if="isAdmin && !feature.exists"
+        class="action-btn"
+        @click.stop="markAsImplemented"
+      >
+        ✓ Mark Implemented
+      </button>
       
       <button 
         v-if="canDelete" 
         class="action-btn delete" 
-        @click="deleteFeature"
+        @click.stop="deleteFeature"
       >
         🗑️ Delete
       </button>
@@ -87,7 +79,10 @@ import CommentSection from './CommentSection.vue';
 const { currentUser } = useAuth();
 const props = defineProps({
   feature: Object,
+  mergeMode: Boolean,
+  isSelected: Boolean
 });
+
 
 const store = featureStore();
 const showComments = ref(false);
@@ -101,7 +96,7 @@ const markAsImplemented = async () => {
   await store.markAsExists(props.feature.id);
 };
 
-const selectForMerge = () => {
+const handleCardClick = () => {
   if (props.mergeMode) {
     emit('select-for-merge', props.feature.id);
   }
@@ -365,9 +360,7 @@ const canDelete = computed(() => {
   background-color: #f0f7ff;
 }
 
-.merge-btn {
-  background-color: #e6f7ff;
-  color: #0073e6;
+.action-buttons > * {
+  pointer-events: auto;
 }
-
 </style>

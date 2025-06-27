@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import AddFeatureView from '@/views/AddFeatureView.vue';
-import AdminView from '@/views/AdminView.vue';
 import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
 import { useAuth } from '@/services/auth';
@@ -16,11 +15,6 @@ const routes = [
     path: '/add',
     component: AddFeatureView,
     meta: { requiresAuth: true }
-  },
-  {
-    path: '/admin',
-    component: AdminView,
-    meta: { requiresAuth: true, requiresAdmin: true }
   },
   {
     path: '/login',
