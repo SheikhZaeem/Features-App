@@ -50,16 +50,17 @@ export const featureStore = defineStore('features', {
         console.error('Failed to add feature:', error);
       }
     },
-    async deleteFeature(id) {
-      try {
-        await fetch(`http://localhost:3000/features/${id}`, {
-          method: 'DELETE'
-        });
-        await this.fetchFeatures();
-      } catch (error) {
-        console.error('Failed to delete feature:', error);
-      }
-    },
+     async deleteFeature(id) {
+    try {
+      await fetch(`http://localhost:3000/features/${id}`, {
+        method: 'DELETE'
+      });
+      this.features = this.features.filter(f => f.id !== id);
+    } catch (error) {
+      console.error('Failed to delete feature:', error);
+      throw error;
+    }
+  },
     async upvoteFeature(featureId, userId) {
       try {
         const featureRes = await fetch(`http://localhost:3000/features/${featureId}`);

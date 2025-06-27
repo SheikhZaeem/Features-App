@@ -3,10 +3,10 @@
     <h1>Feature Requests</h1>
     <div v-if="loading" class="loading">Loading features...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
-    <div v-else-if="features.length === 0" class="empty">No features found</div>
+    <div v-else-if="store.features.length === 0" class="empty">No features found</div>
     <FeatureCard 
       v-else
-      v-for="feature in features" 
+      v-for="feature in store.features" 
       :key="feature.id" 
       :feature="feature" 
     />
@@ -19,7 +19,6 @@ import { featureStore } from '@/stores/featureStore';
 import FeatureCard from '@/components/FeatureCard.vue';
 
 const store = featureStore();
-const features = ref([]);
 const loading = ref(true);
 const error = ref('');
 
@@ -27,7 +26,6 @@ onMounted(async () => {
   try {
     loading.value = true;
     await store.fetchFeatures();
-    features.value = store.features;
   } catch (err) {
     console.error('Error loading features:', err);
     error.value = 'Failed to load features. Please try again later.';

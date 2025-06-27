@@ -20,4 +20,5 @@ const pendingFeatures = store.features.filter(f => !f.exists);
 const markAsExists = (id) => {
   store.markAsExists(id);
 };
+
 </script>
