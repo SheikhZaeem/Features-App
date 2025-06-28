@@ -2,6 +2,7 @@
   <div class="container">
     <h1>Submit a Feature Request</h1>
     <form @submit.prevent="submitFeature" class="feature-form">
+      
       <div class="form-group">
         <input 
           v-model="title" 

@@ -18,15 +18,16 @@
           >
             Submit Feature
           </router-link>
+          <button @click="handleLogout" class="nav-link logout-button">
+            Logout
+          </button>
           <div class="user-info">
             <span class="user-greeting">
               Hi, {{ currentUser.username }}
             </span>
             <span v-if="isAdmin" class="admin-badge">ADMIN</span>
           </div>
-          <button @click="handleLogout" class="nav-link logout-button">
-            Logout
-          </button>
+
         </template>
         <template v-else>
           <router-link to="/login" class="nav-link">Login</router-link>
@@ -154,8 +155,7 @@ nav {
 
 .user-greeting {
   color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
-  margin-left: 1rem;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
 }
@@ -189,11 +189,9 @@ nav {
   margin-left: 0.5rem;
 }
 
-/* Update user-info styles */
 .user-info {
   display: flex;
   align-items: center;
-  margin-left: 1rem;
 }
 
 </style>
