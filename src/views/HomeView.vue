@@ -91,35 +91,29 @@ const confirmMerge = async () => {
     const featuresToMerge = mergeMode.value.selected.map(id => 
       store.features.find(f => f.id === id)
     ).filter(Boolean);
-    
     if (featuresToMerge.length < 2) return;
-
+    
     const keptFeature = featuresToMerge.reduce((prev, current) => 
       prev.upvotes > current.upvotes ? prev : current
     );
-    
     const removedFeatures = featuresToMerge.filter(f => f.id !== keptFeature.id);
     
-    // create merged feature data
     const mergedFeature = {
       ...keptFeature,
-      title: keptFeature.title,
-      description: `## Merged from multiple feature requests:\n\n${
-        featuresToMerge.map(f => `- **${f.title}** (by @${f.username})`).join('\n')
-      }\n\n---\n\n${featuresToMerge.map(f => f.description).join('\n\n---\n\n')}`,
-      upvotes: featuresToMerge.reduce((sum, f) => sum + f.upvotes, 0),
-      upvotedBy: [...new Set(
-        featuresToMerge.flatMap(f => f.upvotedBy || [])
-      )],
       mergedFrom: featuresToMerge.map(f => ({
         id: f.id,
         userId: f.userId,
         username: f.username,
-        name: f.name
-      }))
+        name: f.name,
+        avatar: f.avatar,
+        title: f.title,
+        description: f.description
+      })),
+      description: keptFeature.description
     };
+    
     await store.updateFeature(keptFeature.id, mergedFeature);
-
+    
     await Promise.all(
       removedFeatures.map(f => store.deleteFeature(f.id))
     );

@@ -73,14 +73,24 @@
       "isAdmin": false,
       "features": [],
       "avatar": "https://i.pravatar.cc/150?u=sir@gmail.com"
+    },
+    {
+      "id": "c936",
+      "name": "Ajmal Banday",
+      "username": "ajmal_banday_338",
+      "email": "ajmal@email.com",
+      "password": "beerwah",
+      "isAdmin": false,
+      "features": [],
+      "avatar": "https://i.pravatar.cc/150?u=ajmal@email.com"
     }
   ],
   "features": [
     {
       "id": "2",
       "title": "Voice Commands",
-      "description": "## Merged from multiple feature requests:\n\n- **Dark Mode** (by @CarlSpree31)\n- **Voice Commands** (by @EmmaDev)\n\n---\n\nAdd a dark theme option for better nighttime viewing\n\n---\n\nImplement voice control for hands-free navigation",
-      "upvotes": 4,
+      "description": "Implement voice control for hands-free navigation",
+      "upvotes": 2,
       "exists": true,
       "userId": "2",
       "createdAt": "2023-08-18T14:22:00Z",
@@ -96,13 +106,19 @@
           "id": "1",
           "userId": "1",
           "username": "CarlSpree31",
-          "name": "Carl Spree"
+          "name": "Carl Spree",
+          "avatar": "https://randomuser.me/api/portraits/men/32.jpg",
+          "title": "Dark Mode",
+          "description": "Add a dark theme option for better nighttime viewing"
         },
         {
           "id": "2",
           "userId": "2",
           "username": "EmmaDev",
-          "name": "Emma Johnson"
+          "name": "Emma Johnson",
+          "avatar": "https://randomuser.me/api/portraits/women/44.jpg",
+          "title": "Voice Commands",
+          "description": "Implement voice control for hands-free navigation"
         }
       ]
     },
@@ -174,6 +190,15 @@
       "upvotes": 0,
       "exists": false,
       "createdAt": "2025-06-27T19:43:38.232Z"
+    },
+    {
+      "id": "f503",
+      "title": "Feature",
+      "description": "demo",
+      "userId": "c936",
+      "upvotes": 0,
+      "exists": false,
+      "createdAt": "2025-06-28T07:03:30.510Z"
     }
   ],
   "comments": [
@@ -280,6 +305,14 @@
       "userId": "2",
       "isAdmin": true,
       "createdAt": "2025-06-27T19:46:02.884Z"
+    },
+    {
+      "id": "c3fe",
+      "text": "wow\n",
+      "featureId": "2",
+      "userId": "c936",
+      "isAdmin": false,
+      "createdAt": "2025-06-28T07:03:13.209Z"
     }
   ]
 }

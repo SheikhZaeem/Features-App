@@ -8,35 +8,37 @@
     }"
     @click="handleCardClick"
   >
-    <div v-if="feature.mergedFrom" class="merged-badge">
-      🔀 Merged from {{ feature.mergedFrom.length }} feature requests
-    </div>
-    
-    <div class="card-top">
-
-      <template v-if="feature.mergedFrom">
+    <div v-if="feature.mergedFrom" class="merged-header">
+      <div class="merged-badge">
+        🔀 Merged from {{ feature.mergedFrom.length }} feature requests
+      </div>
+      <div class="merged-avatars">
         <img 
           v-for="user in mergedUsers" 
           :key="user.id"
           class="profile-pic merged-avatar"
           :src="user.avatar || '@/assets/icons/profile-pic-icon.png'"
+          :title="user.name"
         />
-      </template>
+      </div>
+    </div>
+    <div class="card-top">
       <img 
-        v-else
+        v-if="!feature.mergedFrom"
         class="profile-pic" 
         :src="feature.avatar || '@/assets/icons/profile-pic-icon.png'"
       />
-      
       <div class="user-info">
         <div v-if="feature.mergedFrom" class="name">
-          {{ mergedUsers.map(u => u.name).join(', ') }}
+          Combined Request
         </div>
         <div v-else class="name">{{ feature.name }}</div>
         
         <div class="username">
           <template v-if="feature.mergedFrom">
-            @{{ mergedUsers.map(u => u.username).join(', @') }}
+            <span v-for="(user, index) in mergedUsers" :key="user.id">
+              @{{ user.username }}<span v-if="index < mergedUsers.length - 1">, </span>
+            </span>
           </template>
           <template v-else>
             @{{ feature.username }}
@@ -44,10 +46,40 @@
         </div>
       </div>
     </div>
-
     <h3 class="title">{{ feature.title }}</h3>
     <p class="description">{{ feature.description }}</p>
-    
+    <div v-if="feature.mergedFrom" class="merged-content">
+      <div class="merged-section">
+        <h4>Combined from these requests:</h4>
+        
+        <div 
+          v-for="(req, index) in feature.mergedFrom" 
+          :key="req.id"
+          class="merged-request"
+        >
+          <div class="request-header">
+            <div class="request-user">
+              <img 
+                class="profile-pic small"
+                :src="req.avatar || '@/assets/icons/profile-pic-icon.png'"
+              />
+              <div class="request-user-info">
+                <div class="name">{{ req.name }}</div>
+                <div class="username">@{{ req.username }}</div>
+              </div>
+            </div>
+            <div class="request-title">"{{ req.title }}"</div>
+          </div>
+          
+          <div class="request-description">
+            {{ req.description }}
+          </div>
+          
+          <div v-if="index < feature.mergedFrom.length - 1" class="divider"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="action-buttons">
       <button class="action-btn upvote" @click="upvote">
         👍 Upvote ({{ feature.upvotes }})
@@ -219,7 +251,6 @@ const addComment = async (commentData) => {
 
 const mergedUsers = computed(() => {
   if (!props.feature.mergedFrom) return [];
-  
   const uniqueUsers = [];
   const seenIds = new Set();
   
@@ -238,8 +269,6 @@ const mergedUsers = computed(() => {
   return uniqueUsers;
 });
 
-
-// to include admin check
 const canDelete = computed(() => {
   return currentUser.value?.id === props.feature.userId || currentUser.value?.isAdmin;
 });
@@ -416,27 +445,121 @@ const canDelete = computed(() => {
 .action-buttons > * {
   pointer-events: auto;
 }
+.merged-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 
 .merged-badge {
   background-color: #e6f7ff;
   color: #0073e6;
-  padding: 0.5rem;
-  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
   font-size: 0.9rem;
-  margin-bottom: 1rem;
-  text-align: center;
+  font-weight: 500;
 }
 
 .merged-feature {
   border-left: 4px solid #0073e6;
+  background-color: #f9fbff;
 }
-/* style for multiple avatars */
+
+/* Style for multiple avatars */
+.merged-avatars {
+  display: flex;
+}
+
 .merged-avatar {
-  width: 36px;
-  height: 36px;
-  margin-right: -10px;
+  width: 32px;
+  height: 32px;
+  margin-left: -10px;
   border: 2px solid white;
+  border-radius: 50%;
   box-shadow: 0 0 0 1px #e1e4e8;
+}
+
+.merged-avatar:first-child {
+  margin-left: 0;
+}
+
+.merged-content {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #e1e4e8;
+}
+
+.merged-section {
+  background-color: #f8fafd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.merged-section h4 {
+  color: #0073e6;
+  margin-bottom: 1rem;
+}
+
+.merged-request {
+  padding: 1rem 0;
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.request-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.request-user-info {
+  line-height: 1.2;
+}
+
+.request-user .name {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.request-user .username {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.request-title {
+  font-style: italic;
+  color: #555;
+  max-width: 50%;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.request-description {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #444;
+  background-color: #f0f4ff;
+  padding: 0.8rem;
+  border-radius: 6px;
+  margin-top: 0.5rem;
+}
+
+.profile-pic.small {
+  width: 28px;
+  height: 28px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #e1e4e8;
+  margin: 1rem 0;
 }
 
 </style>
