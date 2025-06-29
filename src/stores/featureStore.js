@@ -11,7 +11,6 @@ export const featureStore = defineStore('features', {
         // fetching features and users separately
         const featuresRes = await fetch('http://localhost:3000/features');
         const features = await featuresRes.json();
-        
         const usersRes = await fetch('http://localhost:3000/users');
         const users = await usersRes.json();
         // mapping user data to features
@@ -28,26 +27,49 @@ export const featureStore = defineStore('features', {
         console.error('Failed to fetch features:', error);
       }
     },
-    async addFeature(feature) {
+    // async addFeature(feature) {
+    //   try {
+    //     const auth = useAuth();
+    //     const userId = auth.currentUser.value?.id;
+        
+    //     if (!userId) throw new Error('User not authenticated');
+    //     await fetch('http://localhost:3000/features', {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify({
+    //         ...feature,
+    //         userId: userId,
+    //         upvotes: 0,
+    //         exists: false,
+    //         createdAt: new Date().toISOString()
+    //       })
+    //     });
+    //     await this.fetchFeatures();
+    //   } catch (error) {
+    //     console.error('Failed to add feature:', error);
+    //   }
+    // },
+    async addFeature(formData) {
       try {
         const auth = useAuth();
         const userId = auth.currentUser.value?.id;
-        
         if (!userId) throw new Error('User not authenticated');
-        await fetch('http://localhost:3000/features', {
+        
+        formData.append('userId', userId);
+        formData.append('upvotes', '0');
+        formData.append('exists', 'false');
+        formData.append('createdAt', new Date().toISOString());
+        
+        const response = await fetch('http://localhost:4000/features', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...feature,
-            userId: userId,
-            upvotes: 0,
-            exists: false,
-            createdAt: new Date().toISOString()
-          })
+          body: formData
         });
+        if (!response.ok) throw new Error('Failed to add feature');
+        
         await this.fetchFeatures();
       } catch (error) {
         console.error('Failed to add feature:', error);
+        throw error;
       }
     },
     async deleteFeature(id) {

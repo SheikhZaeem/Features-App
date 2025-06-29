@@ -48,6 +48,27 @@
     </div>
     <h3 class="title">{{ feature.title }}</h3>
     <p class="description">{{ feature.description }}</p>
+
+     <!-- attachment section -->
+    <div v-if="feature.attachments && feature.attachments.length" class="attachments-section">
+      <h4>Attachments:</h4>
+      <div class="attachments-list">
+        <div v-for="(attachment, index) in feature.attachments" :key="index" class="attachment-item">
+          <a 
+            :href="attachment.url" 
+            target="_blank"
+            class="attachment-link"
+          >
+            <span v-if="isImage(attachment.type)" class="attachment-icon">🖼️</span>
+            <span v-else-if="isPDF(attachment.type)" class="attachment-icon">📄</span>
+            <span v-else class="attachment-icon">📎</span>
+            {{ attachment.name }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+
     <div v-if="feature.mergedFrom" class="merged-content">
       <div class="merged-section">
         <h4>Combined from these requests:</h4>
@@ -248,6 +269,8 @@ const addComment = async (commentData) => {
     console.error('Failed to add comment:', error);
   }
 };
+const isImage = (type) => type.startsWith('image/');
+const isPDF = (type) => type === 'application/pdf';
 
 const mergedUsers = computed(() => {
   if (!props.feature.mergedFrom) return [];
@@ -466,7 +489,6 @@ const canDelete = computed(() => {
   background-color: #f9fbff;
 }
 
-/* Style for multiple avatars */
 .merged-avatars {
   display: flex;
 }
@@ -560,6 +582,41 @@ const canDelete = computed(() => {
   height: 1px;
   background-color: #e1e4e8;
   margin: 1rem 0;
+}
+
+.attachments-section {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #e1e4e8;
+}
+
+.attachments-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 0.5rem;
+}
+
+.attachment-item {
+  background: #f0f4ff;
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.attachment-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #1877f2;
+  text-decoration: none;
+}
+
+.attachment-link:hover {
+  text-decoration: underline;
+}
+
+.attachment-icon {
+  font-size: 1.2rem;
 }
 
 </style>

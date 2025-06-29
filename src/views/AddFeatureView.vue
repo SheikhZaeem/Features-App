@@ -19,6 +19,30 @@
           class="form-textarea"
         ></textarea>
       </div>
+
+      <!-- attachment section -->
+      <div class="form-group">
+      <label>Attachments (optional)</label>
+      <div class="attachment-preview" v-if="attachments.length">
+        <div v-for="(file, index) in attachments" :key="index" class="file-item">
+          {{ file.name }}
+          <button type="button" @click="removeAttachment(index)" class="remove-btn">×</button>
+        </div>
+      </div>
+      <div class="file-input-container">
+        <input 
+          type="file" 
+          ref="fileInput"
+          @change="handleFileUpload"
+          multiple
+          class="file-input"
+        />
+        <button type="button" @click="triggerFileInput" class="attach-button">
+          📎 Add Attachment
+        </button>
+      </div>
+    </div>
+
       <button type="submit" class="submit-button">
         Submit Feature Request
       </button>
@@ -33,14 +57,36 @@ import { useRouter } from 'vue-router';
 
 const title = ref('');
 const description = ref('');
+const attachments = ref([]);
+const fileInput = ref(null);
+
 const store = featureStore();
 const router = useRouter();
 
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
+const handleFileUpload = (e) => {
+  const files = e.target.files;
+  for (let i = 0; i < files.length; i++) {
+    attachments.value.push(files[i]);
+  }
+  e.target.value = null; // Reset input
+};
+const removeAttachment = (index) => {
+  attachments.value.splice(index, 1);
+};
+
 const submitFeature = async () => {
-  await store.addFeature({
-    title: title.value,
-    description: description.value
+  const formData = new FormData();
+  formData.append('title', title.value);
+  formData.append('description', description.value);
+  // append attachments
+  attachments.value.forEach(file => {
+    formData.append('attachments', file);
   });
+
+  await store.addFeature(formData);
   router.push('/');
 };
 </script>
@@ -111,5 +157,52 @@ h1 {
   background: #00a8e0;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 196, 255, 0.2);
+}
+
+.attachment-preview {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+.remove-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-input-container {
+  display: flex;
+  gap: 10px;
+}
+
+.file-input {
+  display: none;
+}
+.attach-button {
+  padding: 0.5rem 1rem;
+  background: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.attach-button:hover {
+  background: #dee2e6;
 }
 </style>

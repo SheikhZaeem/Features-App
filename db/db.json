@@ -73,6 +73,16 @@
       "isAdmin": false,
       "features": [],
       "avatar": "https://i.pravatar.cc/150?u=sir@gmail.com"
+    },
+    {
+      "name": "run bum",
+      "username": "rum33",
+      "email": "run@gmail.com",
+      "password": "beerwah",
+      "isAdmin": false,
+      "features": [],
+      "avatar": "https://i.pravatar.cc/150?u=run@gmail.com",
+      "id": "WTLf-zO"
     }
   ],
   "features": [
@@ -178,9 +188,12 @@
       "title": "Sir Test",
       "description": "I am sir",
       "userId": "a812",
-      "upvotes": 0,
-      "exists": false,
-      "createdAt": "2025-06-27T19:43:38.232Z"
+      "upvotes": 1,
+      "exists": true,
+      "createdAt": "2025-06-27T19:43:38.232Z",
+      "upvotedBy": [
+        "2"
+      ]
     }
   ],
   "comments": [
@@ -287,6 +300,22 @@
       "userId": "2",
       "isAdmin": true,
       "createdAt": "2025-06-27T19:46:02.884Z"
+    },
+    {
+      "id": "f47a",
+      "text": "d",
+      "featureId": "f176",
+      "userId": "WTLf-zO",
+      "isAdmin": false,
+      "createdAt": "2025-06-28T19:49:11.861Z"
+    },
+    {
+      "id": "9ba3",
+      "text": "wow\n",
+      "featureId": "3",
+      "userId": "WTLf-zO",
+      "isAdmin": false,
+      "createdAt": "2025-06-29T09:16:00.558Z"
     }
   ]
 }
