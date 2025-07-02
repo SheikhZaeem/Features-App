@@ -37,7 +37,8 @@
     },
     {
       "id": "32a8",
-      "username": "Zaeem King",
+      "name": "Zaeem king",
+      "username": "king21",
       "email": "king@gmail.com",
       "password": "kunzer",
       "isAdmin": false,
