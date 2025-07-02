@@ -8,47 +8,13 @@ export const featureStore = defineStore('features', {
   actions: {
     async fetchFeatures() {
       try {
-        // fetching features and users separately
-        const featuresRes = await fetch('http://localhost:3000/features');
-        const features = await featuresRes.json();
-        const usersRes = await fetch('http://localhost:3000/users');
-        const users = await usersRes.json();
-        // mapping user data to features
-        this.features = features.map(feature => {
-          const user = users.find(u => u.id === feature.userId.toString());
-          return {
-            ...feature,
-            name: user?.name || 'Unknown',
-            username: user?.username || 'unknown',
-            avatar: user?.avatar || '@/assets/icons/profile-pic-icon.png'
-          };
-        });
+        const response = await fetch('http://localhost:4000/features');
+        this.features = await response.json();
       } catch (error) {
         console.error('Failed to fetch features:', error);
       }
     },
-    // async addFeature(feature) {
-    //   try {
-    //     const auth = useAuth();
-    //     const userId = auth.currentUser.value?.id;
-        
-    //     if (!userId) throw new Error('User not authenticated');
-    //     await fetch('http://localhost:3000/features', {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify({
-    //         ...feature,
-    //         userId: userId,
-    //         upvotes: 0,
-    //         exists: false,
-    //         createdAt: new Date().toISOString()
-    //       })
-    //     });
-    //     await this.fetchFeatures();
-    //   } catch (error) {
-    //     console.error('Failed to add feature:', error);
-    //   }
-    // },
+    
     async addFeature(formData) {
       try {
         const auth = useAuth();
@@ -58,65 +24,67 @@ export const featureStore = defineStore('features', {
         formData.append('userId', userId);
         formData.append('upvotes', '0');
         formData.append('exists', 'false');
-        formData.append('createdAt', new Date().toISOString());
         
         const response = await fetch('http://localhost:4000/features', {
           method: 'POST',
           body: formData
         });
-        if (!response.ok) throw new Error('Failed to add feature');
         
+        if (!response.ok) throw new Error('Failed to add feature');
         await this.fetchFeatures();
       } catch (error) {
         console.error('Failed to add feature:', error);
         throw error;
       }
     },
+    
     async deleteFeature(id) {
       try {
-        await fetch(`http://localhost:3000/features/${id}`, {
+        await fetch(`http://localhost:4000/features/${id}`, {
           method: 'DELETE'
         });
         this.features = this.features.filter(f => f.id !== id);
-        } catch (error) {
-          console.error('Failed to delete feature:', error);
-          throw error;
-        }
-      },
+      } catch (error) {
+        console.error('Failed to delete feature:', error);
+        throw error;
+      }
+    },
+    
     async upvoteFeature(featureId, userId) {
       try {
-        const featureRes = await fetch(`http://localhost:3000/features/${featureId}`);
-        const feature = await featureRes.json();
-      
+        const feature = this.features.find(f => f.id === featureId);
+        if (!feature) throw new Error('Feature not found');
+        
         if (feature.upvotedBy?.includes(userId)) {
           throw new Error('User already upvoted');
         }
+        
         const updatedData = {
           upvotes: feature.upvotes + 1,
           upvotedBy: [...(feature.upvotedBy || []), userId]
         };
-        await fetch(`http://localhost:3000/features/${featureId}`, {
+        
+        await fetch(`http://localhost:4000/features/${featureId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedData)
         });
+        
+        await this.fetchFeatures();
       } catch (error) {
         console.error('Failed to upvote feature:', error);
         throw error;
       }
     },
+    
     async markAsExists(id) {
       try {
-        await fetch(`http://localhost:3000/features/${id}`, {
+        await fetch(`http://localhost:4000/features/${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ exists: true })
         });
-        
-        const feature = this.features.find(f => f.id === id);
-        if (feature) {
-          feature.exists = true;
-        }
+        await this.fetchFeatures();
       } catch (error) {
         console.error('Failed to mark as implemented:', error);
         throw error;
@@ -125,23 +93,47 @@ export const featureStore = defineStore('features', {
   
     async updateFeature(id, updatedData) {
       try {
-        const response = await fetch(`http://localhost:3000/features/${id}`, {
+        await fetch(`http://localhost:4000/features/${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedData)
         });
-        if (!response.ok) throw new Error('Update failed');
-        
-        // update local state
-        const index = this.features.findIndex(f => f.id === id);
-        if (index !== -1) {
-          this.features[index] = { 
-            ...this.features[index], 
-            ...updatedData 
-          };
-        }
+        await this.fetchFeatures();
       } catch (error) {
         console.error('Failed to update feature:', error);
+        throw error;
+      }
+    },
+    
+    async fetchComments(featureId) {
+      try {
+        const response = await fetch(
+          `http://localhost:4000/comments?featureId=${featureId}`
+        );
+        return await response.json();
+      } catch (error) {
+        console.error('Failed to fetch comments:', error);
+        return [];
+      }
+    },
+    
+    async addComment(comment) {
+      try {
+        const auth = useAuth();
+        const userId = auth.currentUser.value?.id;
+        if (!userId) throw new Error('User not authenticated');
+        
+        await fetch('http://localhost:4000/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...comment,
+            userId,
+            isAdmin: auth.currentUser.value?.isAdmin || false
+          })
+        });
+      } catch (error) {
+        console.error('Failed to add comment:', error);
         throw error;
       }
     }

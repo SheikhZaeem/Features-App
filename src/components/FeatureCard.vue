@@ -188,24 +188,14 @@ const handleCardClick = () => {
 const upvote = async () => {
   if (!currentUser.value) return;
 
-  // chcking if user already upvoted
-  if (props.feature.upvotedBy?.includes(currentUser.value.id)) {
-    alert('You already upvoted this feature!');
-    return;
-  }
-
-  const originalUpvotes = props.feature.upvotes;
-  const originalUpvotedBy = [...(props.feature.upvotedBy || [])];
-  props.feature.upvotes += 1;
-  props.feature.upvotedBy = [...originalUpvotedBy, currentUser.value.id];
-  
   try {
     await store.upvoteFeature(props.feature.id, currentUser.value.id);
   } catch (error) {
-    // revrting on error
-    props.feature.upvotes = originalUpvotes;
-    props.feature.upvotedBy = originalUpvotedBy;
-    console.error('Failed to upvote:', error);
+    if (error.message === 'User already upvoted') {
+      alert('You already upvoted this feature!');
+    } else {
+      console.error('Failed to upvote:', error);
+    }
   }
 };
 

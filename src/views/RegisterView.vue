@@ -100,7 +100,6 @@ const handleRegister = async () => {
     });
     
     if (!response.ok) throw new Error('Registration failed');
-    
     // autologin after regis
     if (await login(email.value, password.value)) {
       router.push('/');

@@ -16,31 +16,55 @@ export function initAuth() {
 export function useAuth() {
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:3000/users?email=' + email)
-      const users = await response.json();
+      const response = await fetch('http://localhost:4000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
       
-      const user = users.find(u => u.email === email && u.password === password);
+      if (!response.ok) return false;
       
-      if (user) {
-        isAuthenticated.value = true;
-        currentUser.value = user;
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        return true;
-      }
-      return false;
+      const user = await response.json();
+      isAuthenticated.value = true;
+      currentUser.value = user;
+      
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('currentUser', JSON.stringify(user));
+      return true;
     } catch (error) {
       console.error('Login failed:', error);
       return false;
     }
-  }
+  };
   
-const logout = () => {
-  isAuthenticated.value = false;
-  currentUser.value = null;
-  localStorage.removeItem('isAuthenticated');
-  localStorage.removeItem('currentUser');
-}
+  const register = async (name, username, email, password) => {
+    try {
+      const response = await fetch('http://localhost:4000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, username, email, password })
+      });
+      
+      return response.ok;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      return false;
+    }
+  };
+  
+  const logout = () => {
+    isAuthenticated.value = false;
+    currentUser.value = null;
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('currentUser');
+  };
 
-  return { isAuthenticated, currentUser, login, logout, initAuth }
+  return { 
+    isAuthenticated, 
+    currentUser, 
+    login,
+    register,
+    logout,
+    initAuth
+  };
 }
