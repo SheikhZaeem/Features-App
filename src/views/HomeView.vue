@@ -108,19 +108,27 @@ const confirmMerge = async () => {
         title: f.title,
         description: f.description
       })),
-      description: featuresToMerge.map(f => f.description).join('\n\n---\n\n')
+      description: featuresToMerge.map(f => 
+        `### ${f.title}\n${f.description}`
+      ).join('\n\n---\n\n')
     };
+    
     const keptId = baseFeature.id;
     await store.updateFeature(keptId, mergedData);
 
-    const idsToDelete = featuresToMerge.map(f => f.id).filter(id => id !== keptId);
-    await Promise.all(idsToDelete.map(id => store.deleteFeature(id)));
+    const idsToDelete = featuresToMerge
+      .map(f => f.id)
+      .filter(id => id !== keptId);
+    
+    for (const id of idsToDelete) {
+      await store.deleteFeature(id);
+    }
     
     cancelMerge();
     alert(`Merged ${featuresToMerge.length} features successfully!`);
   } catch (err) {
     console.error('Merge failed:', err);
-    alert('Failed to merge features');
+    alert('Failed to merge features: ' + err.message);
   }
 };
 

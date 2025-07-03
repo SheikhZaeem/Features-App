@@ -11,6 +11,18 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 4000;
 
+const safeJsonParse = (value) => {
+  if (typeof value === 'string') {
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      return [];
+    }
+  }
+  return value; 
+};
+
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
@@ -97,7 +109,16 @@ app.get('/features', async (req, res) => {
       FROM features f
       JOIN users u ON f.userId = u.id
     `);
-    res.json(features);
+    const parsedFeatures = features.map(feature => {
+      const jsonFields = ['upvotedBy', 'mergedFrom', 'attachments'];
+      const parsed = { ...feature };
+      jsonFields.forEach(field => {
+        parsed[field] = safeJsonParse(parsed[field]);
+      });
+      return parsed;
+    });
+    
+    res.json(parsedFeatures);
   } catch (error) {
     console.error('Error fetching features:', error);
     res.status(500).json({ error: 'Server error' });
@@ -154,29 +175,25 @@ app.patch('/features/:id', async (req, res) => {
   const updates = req.body;
   
   try {
+    const jsonFields = ['upvotedBy', 'mergedFrom', 'attachments'];
     const updateValues = { ...updates };
     
-    const jsonFields = ['upvotedBy', 'mergedFrom', 'attachments'];
     jsonFields.forEach(field => {
       if (updateValues[field]) {
         updateValues[field] = JSON.stringify(updateValues[field]);
       }
     });
     
-    const escapedUpdates = {};
-    Object.entries(updateValues).forEach(([key, value]) => {
-      if (key === 'exists') {
-        escapedUpdates['`exists`'] = value;
-      } else {
-        escapedUpdates[key] = value;
-      }
-    });
+    if ('exists' in updateValues) {
+      updateValues['`exists`'] = updateValues.exists;
+      delete updateValues.exists;
+    }
     
-    const setClause = Object.keys(escapedUpdates)
+    const setClause = Object.keys(updateValues)
       .map(key => `${key} = ?`)
       .join(', ');
     
-    const values = [...Object.values(escapedUpdates), id];
+    const values = [...Object.values(updateValues), id];
     
     await pool.query(
       `UPDATE features SET ${setClause} WHERE id = ?`,
@@ -190,16 +207,12 @@ app.patch('/features/:id', async (req, res) => {
        WHERE f.id = ?`,
       [id]
     );
+    
     const parsedFeature = { ...updatedFeature[0] };
     jsonFields.forEach(field => {
-      if (parsedFeature[field]) {
-        try {
-          parsedFeature[field] = JSON.parse(parsedFeature[field]);
-        } catch (e) {
-          console.error(`Error parsing ${field}:`, e);
-        }
-      }
+      parsedFeature[field] = safeJsonParse(parsedFeature[field]);
     });
+    
     res.json(parsedFeature);
   } catch (error) {
     console.error('Error updating feature:', error);

@@ -71,7 +71,7 @@ const handleFileUpload = (e) => {
   for (let i = 0; i < files.length; i++) {
     attachments.value.push(files[i]);
   }
-  e.target.value = null; // Reset input
+  e.target.value = null; 
 };
 const removeAttachment = (index) => {
   attachments.value.splice(index, 1);
