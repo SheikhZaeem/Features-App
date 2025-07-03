@@ -81,38 +81,33 @@ const username = ref('');
 const email = ref('');
 const password = ref('');
 const router = useRouter();
-const { login } = useAuth();
+const { register, login } = useAuth(); 
 
 const handleRegister = async () => {
   try {
-    const response = await fetch('http://localhost:3000/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: fullName.value, 
-        username: username.value,
-        email: email.value,
-        password: password.value,
-        isAdmin: false,
-        features: [],
-        avatar: `https://i.pravatar.cc/150?u=${email.value}`
-      })
-    });
+    const success = await register(
+      fullName.value,
+      username.value,
+      email.value,
+      password.value
+    );
     
-    if (!response.ok) throw new Error('Registration failed');
-    // autologin after regis
-    if (await login(email.value, password.value)) {
-      router.push('/');
+    if (success) {
+      if (await login(email.value, password.value)) {
+        router.push('/');
+      } else {
+        throw new Error('Auto-login failed');
+      }
     } else {
-      throw new Error('Auto-login failed');
+      throw new Error('Registration failed');
     }
   } catch (error) {
     console.error('Registration error:', error);
     alert('Registration failed. Please try again.');
   }
 };
-
 </script>
+
 <style scoped>
 .register-container {
   display: flex;
