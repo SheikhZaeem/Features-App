@@ -166,7 +166,6 @@ const props = defineProps({
   isSelected: Boolean
 });
 
-
 const store = featureStore();
 const showComments = ref(false);
 const userComments = ref([]);
@@ -207,24 +206,25 @@ const deleteFeature = async () => {
 
 const fetchComments = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/comments?featureId=${props.feature.id}`);
+    const response = await fetch(`http://localhost:4000/comments?featureId=${props.feature.id}`);
     const comments = await response.json();
-    
-    const usersRes = await fetch('http://localhost:3000/users');
-    const users = await usersRes.json();
     
     userComments.value = comments
       .filter(comment => !comment.isAdmin)
       .map(comment => ({
-        ...comment,
-        user: users.find(u => u.id === comment.userId.toString())?.username || 'Unknown'
+        id: comment.id,
+        text: comment.text,
+        user: comment.username, 
+        createdAt: comment.createdAt
       }));
     
     adminComments.value = comments
       .filter(comment => comment.isAdmin)
       .map(comment => ({
-        ...comment,
-        user: users.find(u => u.id === comment.userId.toString())?.name || 'Admin'
+        id: comment.id,
+        text: comment.text,
+        user: comment.name,
+        createdAt: comment.createdAt
       }));
   } catch (error) {
     console.error('Failed to fetch comments:', error);
@@ -243,22 +243,24 @@ const addComment = async (commentData) => {
     const auth = useAuth();
     const userId = auth.currentUser.value?.id;
     
-    await fetch('http://localhost:3000/comments', {
+    // 3. Use new backend endpoint
+    await fetch('http://localhost:4000/comments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        ...commentData,
+        text: commentData.text, // Only send text
         featureId: props.feature.id,
         userId: userId,
         isAdmin: auth.currentUser.value?.isAdmin || false,
         createdAt: new Date().toISOString()
       })
     });
-    await fetchComments();
+    await fetchComments(); // Refresh comments
   } catch (error) {
     console.error('Failed to add comment:', error);
   }
 };
+
 const isImage = (type) => type.startsWith('image/');
 const isPDF = (type) => type === 'application/pdf';
 
