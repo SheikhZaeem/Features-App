@@ -91,15 +91,14 @@ const confirmMerge = async () => {
     const featuresToMerge = mergeMode.value.selected.map(id => 
       store.features.find(f => f.id === id)
     ).filter(Boolean);
-    if (featuresToMerge.length < 2) return;
     
-    const keptFeature = featuresToMerge.reduce((prev, current) => 
+    if (featuresToMerge.length < 2) return;
+
+    const baseFeature = featuresToMerge.reduce((prev, current) => 
       prev.upvotes > current.upvotes ? prev : current
     );
-    const removedFeatures = featuresToMerge.filter(f => f.id !== keptFeature.id);
     
-    const mergedFeature = {
-      ...keptFeature,
+    const mergedData = {
       mergedFrom: featuresToMerge.map(f => ({
         id: f.id,
         userId: f.userId,
@@ -109,16 +108,15 @@ const confirmMerge = async () => {
         title: f.title,
         description: f.description
       })),
-      description: keptFeature.description
+      description: featuresToMerge.map(f => f.description).join('\n\n---\n\n')
     };
+    const keptId = baseFeature.id;
+    await store.updateFeature(keptId, mergedData);
+
+    const idsToDelete = featuresToMerge.map(f => f.id).filter(id => id !== keptId);
+    await Promise.all(idsToDelete.map(id => store.deleteFeature(id)));
     
-    await store.updateFeature(keptFeature.id, mergedFeature);
-    
-    await Promise.all(
-      removedFeatures.map(f => store.deleteFeature(f.id))
-    );
     cancelMerge();
-    
     alert(`Merged ${featuresToMerge.length} features successfully!`);
   } catch (err) {
     console.error('Merge failed:', err);
