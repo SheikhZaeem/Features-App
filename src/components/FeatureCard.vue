@@ -142,9 +142,18 @@
       <div v-if="userComments.length" class="comment-header">
         <h4>User Comments ({{ userComments.length }})</h4>
       </div>
-      <div v-for="comment in userComments" :key="comment.id" class="comment">
-        <strong>{{ comment.user }}:</strong>
-        <p>{{ comment.text }}</p>
+        <div v-for="comment in userComments" :key="comment.id" class="comment">
+          <strong>{{ comment.user }}:</strong>
+          <div class="comment-header">
+            <p>{{ comment.text }}</p>
+            <button 
+              v-if="canDeleteComment(comment)"
+              @click="deleteComment(comment.id)"
+              class="delete-comment"
+            >
+              Delete
+            </button>      
+        </div>
       </div>
       <CommentSection 
         @add-comment="addComment" 
@@ -198,11 +207,44 @@ const upvote = async () => {
   }
 };
 
+const canDeleteComment = (comment) => {
+  return (
+    currentUser.value?.id === comment.userId || 
+    currentUser.value?.isAdmin
+  );
+};
+
 const deleteFeature = async () => {
   if (confirm('Are you sure you want to delete this feature?')) {
     await store.deleteFeature(props.feature.id);
   }
 };
+
+const deleteComment = async (commentId) => {
+  try {
+    const auth = useAuth();
+    const userId = auth.currentUser.value?.id;
+    const isAdmin = auth.currentUser.value?.isAdmin || false;
+    
+    const response = await fetch(`http://localhost:4000/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, isAdmin })
+    });
+    
+    if (response.ok) {
+      await fetchComments(); 
+    } else {
+      const errorData = await response.json();
+      alert(`Failed to delete comment: ${errorData.error}`);
+    }
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    alert('Failed to delete comment');
+  }
+};
+
+
 
 const fetchComments = async () => {
   try {
@@ -215,6 +257,7 @@ const fetchComments = async () => {
         id: comment.id,
         text: comment.text,
         user: comment.username, 
+        userId: comment.userId,
         createdAt: comment.createdAt
       }));
     
@@ -224,6 +267,7 @@ const fetchComments = async () => {
         id: comment.id,
         text: comment.text,
         user: comment.name,
+        userId: comment.userId,
         createdAt: comment.createdAt
       }));
   } catch (error) {
@@ -392,6 +436,28 @@ const canDelete = computed(() => {
 .delete {
   background: #fff0f0;
   color: #e0245e;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-comment {
+  background: rgb(0, 0, 0);
+  color: white;
+  border-radius: 8px;
+  border-style: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px;
+
+}
+
+.delete-comment:hover {
+  background: rgba(114, 114, 114, 0.569);
+  color: rgb(0, 0, 0);
 }
 
 .exists-badge {

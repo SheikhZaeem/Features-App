@@ -288,3 +288,28 @@ app.post('/comments', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+app.delete('/comments/:id', async (req, res) => {
+  const { id } = req.params;
+  const { userId, isAdmin } = req.body;
+
+  try {
+    const [comment] = await pool.query(
+      'SELECT * FROM comments WHERE id = ?',
+      [id]
+    );
+    
+    if (comment.length === 0) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+    if (comment[0].userId !== userId && !isAdmin) {
+      return res.status(403).json({ error: 'Unauthorized to delete this comment' });
+    }
+    
+    await pool.query('DELETE FROM comments WHERE id = ?', [id]);
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
