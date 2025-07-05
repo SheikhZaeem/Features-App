@@ -22,30 +22,35 @@
         />
       </div>
     </div>
+
     <div class="card-top">
-      <img 
-        v-if="!feature.mergedFrom"
-        class="profile-pic" 
-        :src="feature.avatar || '@/assets/icons/profile-pic-icon.png'"
-      />
-      <div class="user-info">
-        <div v-if="feature.mergedFrom" class="name">
-          Combined Request
-        </div>
-        <div v-else class="name">{{ feature.name }}</div>
-        
-        <div class="username">
-          <template v-if="feature.mergedFrom">
-            <span v-for="(user, index) in mergedUsers" :key="user.id">
-              @{{ user.username }}<span v-if="index < mergedUsers.length - 1">, </span>
+        <img 
+          v-if="!feature.mergedFrom"
+          class="profile-pic" 
+          :src="feature.avatar || '@/assets/icons/profile-pic-icon.png'"
+        />
+        <div class="user-info">
+          <div v-if="feature.mergedFrom" class="name">
+            Combined Request
+          </div>
+          <div v-else class="name">{{ feature.name }}</div>
+          
+          <div class="username-time">
+            <span>
+              <template v-if="feature.mergedFrom">
+                <span v-for="(user, index) in mergedUsers" :key="user.id">
+                  @{{ user.username }}<span v-if="index < mergedUsers.length - 1">, </span>
+                </span>
+              </template>
+              <template v-else>
+                @{{ feature.username }}
+              </template>
             </span>
-          </template>
-          <template v-else>
-            @{{ feature.username }}
-          </template>
+            <span class="timestamp">· {{ formatTime(feature.createdAt) }}</span>
+          </div>
         </div>
       </div>
-    </div>
+
     <h3 class="title">{{ feature.title }}</h3>
     <p class="description">{{ feature.description }}</p>
 
@@ -142,19 +147,22 @@
       <div v-if="userComments.length" class="comment-header">
         <h4>User Comments ({{ userComments.length }})</h4>
       </div>
-        <div v-for="comment in userComments" :key="comment.id" class="comment">
-          <strong>{{ comment.user }}:</strong>
-          <div class="comment-header">
-            <p>{{ comment.text }}</p>
-            <button 
-              v-if="canDeleteComment(comment)"
-              @click="deleteComment(comment.id)"
-              class="delete-comment"
-            >
-              Delete
-            </button>      
+
+      <div v-for="comment in userComments" :key="comment.id" class="comment">
+        <div class="comment-header">
+          <strong>{{ comment.user }}</strong>
+          <span class="comment-time">{{ formatTime(comment.createdAt) }}</span>
+          <button 
+            v-if="canDeleteComment(comment)"
+            @click="deleteComment(comment.id)"
+            class="delete-comment"
+          >
+            Delete
+          </button>
         </div>
+        <p>{{ comment.text }}</p>
       </div>
+
       <CommentSection 
         @add-comment="addComment" 
       />
@@ -167,6 +175,7 @@ import { ref, computed, onMounted } from 'vue';
 import { featureStore } from '@/stores/featureStore';
 import { useAuth } from '@/services/auth';
 import CommentSection from './CommentSection.vue';
+import { formatTimeAgo } from '@/services/dateHelper';
 
 const { currentUser } = useAuth();
 const props = defineProps({
@@ -280,6 +289,10 @@ const toggleComments = async () => {
   if (showComments.value && userComments.value.length === 0) {
     await fetchComments();
   }
+};
+
+const formatTime = (dateString) => {
+  return formatTimeAgo(dateString);
 };
 
 const addComment = async (commentData) => {
@@ -675,6 +688,32 @@ const canDelete = computed(() => {
 
 .attachment-icon {
   font-size: 1.2rem;
+}
+
+.username-time {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.timestamp {
+  font-size: 0.8rem;
+  color: #65676b;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.comment-time {
+  font-size: 0.75rem;
+  color: #65676b;
+  margin-left: 8px;
+  flex-grow: 1;
 }
 
 </style>

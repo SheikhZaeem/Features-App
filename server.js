@@ -5,6 +5,7 @@ import mysql from 'mysql2/promise';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import 'dotenv/config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,10 +25,10 @@ const safeJsonParse = (value) => {
 };
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'Beerwah@77',
-  database: 'mobivisor_db',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -132,7 +133,8 @@ app.post('/features', upload.array('attachments'), async (req, res) => {
   
   try {
     const featureId = Date.now().toString();
-    const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const createdAt = new Date().toISOString();
     const attachments = req.files?.map(file => ({
       name: file.originalname,
       type: file.mimetype,
@@ -262,7 +264,8 @@ app.post('/comments', async (req, res) => {
   
   try {
     const commentId = Date.now().toString();
-    const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const createdAt = new Date().toISOString();
     
     await pool.query(
       `INSERT INTO comments (id, text, featureId, userId, isAdmin, createdAt)

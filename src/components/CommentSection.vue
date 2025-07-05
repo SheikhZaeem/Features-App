@@ -28,6 +28,7 @@ const addComment = () => {
   if (newComment.value.trim()) {
     emit('add-comment', {
       text: newComment.value,
+      createdAt: new Date().toISOString()
     });
     newComment.value = '';
   }
