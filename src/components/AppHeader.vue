@@ -10,16 +10,16 @@
       </router-link>
       <nav>
         <template v-if="isAuthenticated">
-          <router-link to="/" class="nav-link">Home</router-link>
+          <router-link to="/" class="nav-link">{{ $t('home') }}</router-link>
           <router-link 
             to="/add" 
             class="nav-link" 
             v-if="!isAdmin"
           >
-            Submit Feature
+            {{ $t('submitFeature') }}
           </router-link>
           <button @click="handleLogout" class="nav-link logout-button">
-            Logout
+            {{ $t('logout') }}
           </button>
           <div class="user-info">
             <span class="user-greeting">
@@ -27,26 +27,47 @@
             </span>
             <span v-if="isAdmin" class="admin-badge">ADMIN</span>
           </div>
-
         </template>
         <template v-else>
-          <router-link to="/login" class="nav-link">Login</router-link>
-          <router-link to="/register" class="nav-link">Register</router-link>
+          <router-link to="/login" class="nav-link">{{ $t('login') }}</router-link>
+          <router-link to="/register" class="nav-link">{{ $t('register') }}</router-link>
         </template>
+        <select v-model="currentLocale" @change="changeLanguage" class="language-switcher">
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="tr">Türkçe</option>
+          <option value="zh">中文</option>
+        </select>
       </nav>
     </div>
   </header>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted  } from 'vue';
 import { useAuth } from '@/services/auth';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
+const { t, locale } = useI18n();
 const { isAuthenticated, currentUser, logout } = useAuth();
 const router = useRouter();
-
+const currentLocale = ref(locale.value);
 const isAdmin = computed(() => currentUser.value?.isAdmin || false);
+
+const changeLanguage = () => {
+  locale.value = currentLocale.value;
+  localStorage.setItem('userLocale', currentLocale.value);
+};
+
+onMounted(() => {
+  const savedLocale = localStorage.getItem('userLocale');
+  if (savedLocale) {
+    locale.value = savedLocale;
+    currentLocale.value = savedLocale;
+  }
+});
 
 const handleLogout = () => {
   logout();
@@ -192,6 +213,18 @@ nav {
 .user-info {
   display: flex;
   align-items: center;
+}
+
+.language-switcher {
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  cursor: pointer;
+}
+
+.language-switcher option {
+  background: #0a1a2f;
 }
 
 </style>

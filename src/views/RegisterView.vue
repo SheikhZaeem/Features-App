@@ -7,13 +7,13 @@
           alt="Mobivisor" 
           class="register-logo"
         >
-        <h1>Create Your Account</h1>
-        <p>Join our community of feature requesters</p>
+        <h1>{{ $t('createAccount') }}</h1>
+        <p>{{ $t('joinCommunity') }}</p>
       </div>
       
       <form @submit.prevent="handleRegister" class="register-form"> 
         <div class="form-group">
-          <label for="fullName">Full Name</label>
+          <label for="fullName">{{ $t('fullName') }}</label>
           <input
             id="fullName"
             v-model="fullName"
@@ -24,7 +24,7 @@
           >
         </div>
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">{{ $t('username') }}</label>
           <input
             id="username"
             v-model="username"
@@ -35,7 +35,7 @@
           >
         </div>
         <div class="form-group">
-          <label for="email">Email Address</label>
+          <label for="email">{{ $t('email') }}</label>
           <input
             id="email"
             v-model="email"
@@ -46,7 +46,7 @@
           >
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">{{ $t('password') }}</label>
           <input
             id="password"
             v-model="password"
@@ -56,16 +56,16 @@
             minlength="6"
             class="form-input"
           >
-          <p class="password-hint">Use at least 6 characters</p>
+          <p class="password-hint">{{ $t('passwordHint') }}</p>
         </div>
         
         <button type="submit" class="register-button">
-          Create Account
+          {{ $t('createAccount') }}
         </button>
       </form>
       
       <div class="register-footer">
-        <p>Already have an account? <router-link to="/login">Log in</router-link></p>
+        <p>{{ $t('alreadyHaveAccount') }} <router-link to="/login">{{ $t('logIn') }}</router-link></p>
       </div>
     </div>
   </div>

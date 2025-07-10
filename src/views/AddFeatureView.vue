@@ -1,12 +1,12 @@
 <template>
   <div class="container">
-    <h1>Submit a Feature Request</h1>
+    <h1>{{ $t('submitFeatureRequest') }}</h1>
     <form @submit.prevent="submitFeature" class="feature-form">
       
       <div class="form-group">
         <input 
           v-model="title" 
-          placeholder="Feature title" 
+          :placeholder="t('featureTitle')" 
           required 
           class="form-input"
         />
@@ -14,7 +14,7 @@
       <div class="form-group">
         <textarea 
           v-model="description" 
-          placeholder="Describe your feature in detail..." 
+          :placeholder="t('describeFeature')"
           required 
           class="form-textarea"
         ></textarea>
@@ -22,7 +22,7 @@
 
       <!-- attachment section -->
       <div class="form-group">
-      <label>Attachments (optional)</label>
+      <label>{{ $t('attachments') }}</label>
       <div class="attachment-preview" v-if="attachments.length">
         <div v-for="(file, index) in attachments" :key="index" class="file-item">
           {{ file.name }}
@@ -38,13 +38,13 @@
           class="file-input"
         />
         <button type="button" @click="triggerFileInput" class="attach-button">
-          📎 Add Attachment
+          📎 {{ $t('addAttachment') }}
         </button>
       </div>
     </div>
 
       <button type="submit" class="submit-button">
-        Submit Feature Request
+        {{ $t('submitFeatureRequest') }}
       </button>
     </form>
   </div>
@@ -54,14 +54,16 @@
 import { ref } from 'vue';
 import { featureStore } from '@/stores/featureStore';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const title = ref('');
 const description = ref('');
 const attachments = ref([]);
 const fileInput = ref(null);
-
 const store = featureStore();
 const router = useRouter();
+
 
 const triggerFileInput = () => {
   fileInput.value.click();

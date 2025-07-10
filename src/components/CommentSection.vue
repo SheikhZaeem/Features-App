@@ -3,7 +3,7 @@
     <div class="comment-input-container">
       <textarea
         v-model="newComment"
-        placeholder="Write a comment..."
+        :placeholder="t('writeComment')"
         class="comment-input"
       ></textarea>
       <button 
@@ -11,7 +11,7 @@
         :disabled="!newComment.trim()"
         class="post-button"
       >
-        Post
+        {{ $t('post') }}
       </button>
     </div>
   </div>
@@ -19,6 +19,8 @@
 <script setup>
 
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 const newComment = ref('');
 const emit = defineEmits(['add-comment']);

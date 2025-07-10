@@ -5,6 +5,7 @@ import mysql from 'mysql2/promise';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import 'dotenv/config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,10 +25,10 @@ const safeJsonParse = (value) => {
 };
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'Beerwah@77',
-  database: 'mobivisor_db',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
@@ -62,7 +63,7 @@ app.post('/login', async (req, res) => {
     );
     
     if (rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: t('invalidCredentials') });
     }
     
     const user = rows[0];
@@ -70,7 +71,7 @@ app.post('/login', async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });
 
@@ -83,7 +84,7 @@ app.post('/register', async (req, res) => {
     );
     
     if (existing.length > 0) {
-      return res.status(400).json({ error: 'Email or username already exists' });
+      return res.status(400).json({ error: t('emailExists') });
     }
     
     const userId = Date.now().toString();
@@ -98,7 +99,7 @@ app.post('/register', async (req, res) => {
     res.status(201).json({ message: 'Registration successful' });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });
 
@@ -121,7 +122,7 @@ app.get('/features', async (req, res) => {
     res.json(parsedFeatures);
   } catch (error) {
     console.error('Error fetching features:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });
 
@@ -166,7 +167,7 @@ app.post('/features', upload.array('attachments'), async (req, res) => {
     res.status(201).json(newFeature[0]);
   } catch (error) {
     console.error('Error creating feature:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });
 
@@ -216,7 +217,7 @@ app.patch('/features/:id', async (req, res) => {
     res.json(parsedFeature);
   } catch (error) {
     console.error('Error updating feature:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });
 
@@ -228,7 +229,7 @@ app.delete('/features/:id', async (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.error('Error deleting feature:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });
 
@@ -253,7 +254,7 @@ app.get('/comments', async (req, res) => {
     res.json(comments);
   } catch (error) {
     console.error('Error fetching comments:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });
 
@@ -281,7 +282,7 @@ app.post('/comments', async (req, res) => {
     res.status(201).json(newComment[0]);
   } catch (error) {
     console.error('Error creating comment:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });
 
@@ -310,6 +311,6 @@ app.delete('/comments/:id', async (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.error('Error deleting comment:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: t('serverError') });
   }
 });

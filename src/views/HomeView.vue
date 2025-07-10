@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1>Feature Requests</h1>
+    <h1>{{ $t('featureRequests') }}</h1>
     
     <div v-if="isAdmin" class="admin-controls">
       <button 
@@ -8,27 +8,27 @@
         class="btn merge-btn"
         @click="startMerge"
       >
-        🔄 Merge Features
+        🔄 {{ $t('mergeFeatures') }}
       </button>
       
       <div v-else class="merge-mode">
-        <h2>Merge Mode (Select 2 features)</h2>
+        <h2>{{ $t('mergeMode') }}</h2>
         <div class="merge-controls">
-          <button class="btn" @click="cancelMerge">Cancel</button>
+          <button class="btn" @click="cancelMerge">{{ $t('cancel') }}</button>
           <button 
             class="btn primary" 
             @click="confirmMerge"
             :disabled="mergeMode.selected.length !== 2"
           >
-            Merge Selected Features
+            {{ $t('mergeSelected') }}
           </button>
         </div>
       </div>
     </div>
     
-    <div v-if="loading" class="loading">Loading features...</div>
+    <div v-if="loading" class="loading">{{ $t('loadingFeatures') }}</div>
     <div v-else-if="error" class="error">{{ error }}</div>
-    <div v-else-if="store.features.length === 0" class="empty">No features found</div>
+    <div v-else-if="store.features.length === 0" class="empty">{{ $t('noFeatures') }}</div>
     
     <FeatureCard 
       v-else

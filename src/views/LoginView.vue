@@ -7,8 +7,8 @@
           alt="Mobivisor" 
           class="login-logo"
         >
-        <h1>Welcome Back</h1>
-        <p>Please enter your credentials to log in</p>
+        <h1>{{ $t('welcomeBack') }}</h1>
+        <p>{{ $t('enterCredentials') }}</p>
       </div>
       <div v-if="error" class="error-message">
         {{ error }}
@@ -16,7 +16,7 @@
       
       <form @submit.prevent="handleLogin" class="login-form">
         <div class="form-group">
-          <label for="email">Email Address</label>
+          <label for="email">{{ $t('email') }}</label>
           <input
             id="email"
             v-model="email"
@@ -28,7 +28,7 @@
         </div>
         
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">{{ $t('password') }}</label>
           <input
             id="password"
             v-model="password"
@@ -41,12 +41,12 @@
         </div>
 
         <button type="submit" class="login-button">
-          Log In
+          {{ $t('login') }}
         </button>
       </form>
 
       <div class="login-footer">
-        <p>Don't have an account? <router-link to="/register">Sign up</router-link></p>
+        <p>{{ $t('dontHaveAccount') }} <router-link to="/register">{{ $t('signUp') }}</router-link></p>
       </div>
     </div>
   </div>

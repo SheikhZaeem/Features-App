@@ -10,7 +10,7 @@
   >
     <div v-if="feature.mergedFrom" class="merged-header">
       <div class="merged-badge">
-        🔀 Merged from {{ feature.mergedFrom.length }} feature requests
+        🔀 {{ $t('mergedFrom', { count: feature.mergedFrom.length }) }}
       </div>
       <div class="merged-avatars">
         <img 
@@ -30,7 +30,7 @@
       />
       <div class="user-info">
         <div v-if="feature.mergedFrom" class="name">
-          Combined Request
+          {{ $t('combinedRequest') }}
         </div>
         <div v-else class="name">{{ feature.name }}</div>
         
@@ -51,7 +51,7 @@
 
      <!-- attachment section -->
     <div v-if="feature.attachments && feature.attachments.length" class="attachments-section">
-      <h4>Attachments:</h4>
+      <h4>{{ $t('attachmentsHeader') }}:</h4>
       <div class="attachments-list">
         <div v-for="(attachment, index) in feature.attachments" :key="index" class="attachment-item">
           <a 
@@ -71,7 +71,7 @@
 
     <div v-if="feature.mergedFrom" class="merged-content">
       <div class="merged-section">
-        <h4>Combined from these requests:</h4>
+        <h4>{{ $t('combinedFrom') }}</h4>
         
         <div 
           v-for="(req, index) in feature.mergedFrom" 
@@ -103,10 +103,10 @@
 
     <div class="action-buttons">
       <button class="action-btn upvote" @click="upvote">
-        👍 Upvote ({{ feature.upvotes }})
+        👍 {{ $t('upvote') }} ({{ feature.upvotes }})
       </button>
       <button class="action-btn" @click="toggleComments">
-        💬 {{ showComments ? 'Hide Comments' : 'Show Comments' }}
+        💬 {{ showComments ? $t('hideComments') : $t('showComments') }}
       </button>
       
       <button 
@@ -114,7 +114,7 @@
         class="action-btn"
         @click.stop="markAsImplemented"
       >
-        ✓ Mark Implemented
+        ✓ {{ $t('markImplemented') }}
       </button>
       
       <button 
@@ -122,16 +122,16 @@
         class="action-btn delete" 
         @click.stop="deleteFeature"
       >
-        🗑️ Delete
+        🗑️ {{ $t('delete') }}
       </button>
     </div>
     
-    <div v-if="feature.exists" class="exists-badge">✓ Already Implemented</div>
+    <div v-if="feature.exists" class="exists-badge">✓ {{ $t('alreadyImplemented') }}</div>
     
     <div v-if="adminComments.length" class="admin-comments">
       <div class="comment-header">
         <span class="admin-badge">ADMIN</span>
-        <h4>Official Responses</h4>
+        <h4>{{ $t('officialResponses') }}</h4>
       </div>
       <div v-for="comment in adminComments" :key="comment.id" class="comment">
         <p>{{ comment.text }}</p>
@@ -140,7 +140,7 @@
     
     <div v-if="showComments" class="user-comments">
       <div v-if="userComments.length" class="comment-header">
-        <h4>User Comments ({{ userComments.length }})</h4>
+        <h4>{{ $t('userComments') }} ({{ userComments.length }})</h4>
       </div>
         <div v-for="comment in userComments" :key="comment.id" class="comment">
           <strong>{{ comment.user }}:</strong>
@@ -151,7 +151,7 @@
               @click="deleteComment(comment.id)"
               class="delete-comment"
             >
-              Delete
+              {{ $t('delete') }}
             </button>      
         </div>
       </div>
@@ -167,7 +167,9 @@ import { ref, computed, onMounted } from 'vue';
 import { featureStore } from '@/stores/featureStore';
 import { useAuth } from '@/services/auth';
 import CommentSection from './CommentSection.vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { currentUser } = useAuth();
 const props = defineProps({
   feature: Object,
@@ -215,7 +217,7 @@ const canDeleteComment = (comment) => {
 };
 
 const deleteFeature = async () => {
-  if (confirm('Are you sure you want to delete this feature?')) {
+  if (confirm(t('confirmDelete'))) {
     await store.deleteFeature(props.feature.id);
   }
 };
@@ -240,7 +242,7 @@ const deleteComment = async (commentId) => {
     }
   } catch (error) {
     console.error('Error deleting comment:', error);
-    alert('Failed to delete comment');
+    alert(t('deleteCommentFailed'));
   }
 };
 
