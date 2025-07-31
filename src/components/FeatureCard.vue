@@ -49,25 +49,34 @@
     <h3 class="title">{{ feature.title }}</h3>
     <p class="description">{{ feature.description }}</p>
 
-     <!-- attachment section -->
+    <!-- attachment section -->
     <div v-if="feature.attachments && feature.attachments.length" class="attachments-section">
       <h4>{{ $t('attachmentsHeader') }}:</h4>
       <div class="attachments-list">
-        <div v-for="(attachment, index) in feature.attachments" :key="index" class="attachment-item">
+        <div 
+          v-for="(attachment, index) in feature.attachments" 
+          :key="index" 
+          class="attachment-item"
+          :class="{ 'image-attachment': isImage(attachment.type) }"
+        >
           <a 
             :href="attachment.url" 
             target="_blank"
             class="attachment-link"
           >
-            <span v-if="isImage(attachment.type)" class="attachment-icon">🖼️</span>
-            <span v-else-if="isPDF(attachment.type)" class="attachment-icon">📄</span>
-            <span v-else class="attachment-icon">📎</span>
-            {{ attachment.name }}
+            <div v-if="isImage(attachment.type)" class="image-preview">
+              <img :src="attachment.url" :alt="attachment.name" class="preview-image">
+            </div>
+            
+            <div v-else class="file-info">
+              <span v-if="isPDF(attachment.type)" class="attachment-icon">📄</span>
+              <span v-else class="attachment-icon">📎</span>
+              <span class="file-name">{{ attachment.name }}</span>
+            </div>
           </a>
         </div>
       </div>
     </div>
-
 
     <div v-if="feature.mergedFrom" class="merged-content">
       <div class="merged-section">
@@ -307,8 +316,16 @@ const addComment = async (commentData) => {
   }
 };
 
-const isImage = (type) => type.startsWith('image/');
-const isPDF = (type) => type === 'application/pdf';
+// const isImage = (type) => type.startsWith('image/');
+// const isPDF = (type) => type === 'application/pdf';
+const isImage = (type) => {
+  return type && (type.startsWith('image/')) || 
+         ['jpg', 'jpeg', 'png', 'gif', 'webp'].some(ext => type.includes(ext));
+};
+
+const isPDF = (type) => {
+  return type && (type === 'application/pdf' || type.includes('pdf'));
+};
 
 const mergedUsers = computed(() => {
   if (!props.feature.mergedFrom) return [];
@@ -657,10 +674,69 @@ const canDelete = computed(() => {
   margin-top: 0.5rem;
 }
 
-.attachment-item {
+/* .attachment-item {
   background: #f0f4ff;
   border-radius: 4px;
   padding: 0.5rem;
+} */
+
+.attachment-item {
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.attachment-item:hover {
+  transform: translateY(-3px);
+}
+
+.image-attachment {
+  max-width: 300px;
+  /* margin-bottom: 8px; */
+}
+
+.image-preview {
+  aspect-ratio: 16/9;
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.attachment-item {
+  width: 100%;
+  max-width: 300px;
+}
+
+.preview-image:hover {
+  transform: scale(1.05);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f0f4ff;
+  border-radius: 8px;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
 }
 
 .attachment-link {

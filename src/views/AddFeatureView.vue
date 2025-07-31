@@ -22,13 +22,27 @@
 
       <!-- attachment section -->
       <div class="form-group">
-      <label>{{ $t('attachments') }}</label>
-      <div class="attachment-preview" v-if="attachments.length">
-        <div v-for="(file, index) in attachments" :key="index" class="file-item">
-          {{ file.name }}
+        <label>{{ $t('attachments') }}</label>
+        <div class="attachment-preview" v-if="attachments.length">
+          <div 
+            v-for="(file, index) in attachments" 
+            :key="index" 
+            class="file-item"
+            :class="{ 'image-preview-item': file.type.startsWith('image/') }"
+          >
+          <img 
+            v-if="file.type.startsWith('image/')" 
+            :src="getPreviewURL(file)" 
+            class="preview-thumb"
+          >
+          <span v-else class="file-icon">
+            {{ file.type === 'application/pdf' ? '📄' : '📎' }}
+          </span>
+          <span class="file-name">{{ file.name }}</span>
           <button type="button" @click="removeAttachment(index)" class="remove-btn">×</button>
         </div>
       </div>
+
       <div class="file-input-container">
         <input 
           type="file" 
@@ -77,6 +91,10 @@ const handleFileUpload = (e) => {
 };
 const removeAttachment = (index) => {
   attachments.value.splice(index, 1);
+};
+
+const getPreviewURL = (file) => {
+  return URL.createObjectURL(file);
 };
 
 const submitFeature = async () => {
@@ -166,7 +184,7 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.file-item {
+/* .file-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -174,7 +192,41 @@ h1 {
   background: #f8f9fa;
   border-radius: 4px;
   margin-bottom: 0.5rem;
+} */
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 8px;
 }
+
+.image-preview-item {
+  align-items: flex-start;
+}
+
+.preview-thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.file-icon {
+  font-size: 1.5rem;
+}
+
 .remove-btn {
   background: #ff6b6b;
   color: white;

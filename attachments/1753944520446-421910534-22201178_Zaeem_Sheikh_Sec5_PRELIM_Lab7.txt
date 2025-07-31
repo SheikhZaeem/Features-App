@@ -1,0 +1,192 @@
+CS224               
+Lab 7               
+Section 5              
+Farrukh Mammadov      
+22301186           
+05 May 2025     
+
+CS224               
+Lab 7               
+Section 5              
+Zaeem Masood Sheikh      
+22201178           
+05 May 2025      
+
+
+PRELIMINARY DESIGN REPORT 
+
+a)  Special‑Function Registers (SFRs) used in Part 2‑b  (DC‑Motor control)
+
+•  TRISB  – data‑direction register for PORTB (RB0 & RB1 are push‑buttons).
+•  PORTB  – read the instantaneous states of RB0, RB1.
+•  TRISD  – data‑direction register for PORTD (RD0 & RD1 drive H‑bridge).
+•  LATD   – write logical levels to RD0 / RD1 to set motor direction/stop.
+
+
+b)  C code for Part 2‑b
+
+/******************************************************************************
+ *  CS224 – Lab 7  (Section __)         FILE: dc_motor.c
+ *  Target MCU : PIC32MX795F512L on Beti Training Board
+ *
+ *  Function   : • RB0  (button‑0) → clockwise rotation
+ *               • RB1  (button‑1) → counter‑clockwise rotation
+ *               • If both buttons pressed, motor keeps stopped.
+ *               • On a valid single button press:
+ *                     – wait 1 s  (debounce + delay requirement)
+ *                     – run motor 1 s in the requested direction
+ *                     – stop motor
+ *
+ *  Hardware   : RD0, RD1 lead to the H‑bridge controlling the DC motor.
+ *               RD0=1 RD1=0 ⇒ CW   |  RD0=0 RD1=1 ⇒ CCW   | both 0 ⇒ STOP
+ ******************************************************************************/
+
+#include <xc.h>
+
+// configuration 
+#pragma config FNOSC = PRIPLL, POSCMOD = XT, FPLLMUL = MUL_20, FPLLIDIV = DIV_2
+#pragma config FPBDIV = DIV_1, FWDTEN = OFF, ICESEL = ICS_PGx2, JTAGEN = OFF
+
+#define BTN0        PORTBbits.RB0       // active‑high pushbuttons
+#define BTN1        PORTBbits.RB1
+
+#define MOTOR_CW()  { LATDbits.LATD0 = 1; LATDbits.LATD1 = 0; }
+#define MOTOR_CCW() { LATDbits.LATD0 = 0; LATDbits.LATD1 = 1; }
+#define MOTOR_STOP(){ LATDbits.LATD0 = 0; LATDbits.LATD1 = 0; }
+
+void delay_ms(unsigned long ms)        // crude blocking delay
+{
+    unsigned long i;
+    while(ms--) for(i=0; i<4000; ++i) asm volatile("nop");
+}
+
+int main(void)
+{
+   
+    //  I/O initialisation
+    TRISB |=  0b0000000000000011;     // RB0,RB1 INPUTs
+    TRISD &= ~0b0000000000000011;     // RD0,RD1 OUTPUTs
+    MOTOR_STOP();
+
+    while(1)
+    {
+        char b0 = BTN0;
+        char b1 = BTN1;
+
+        if (b0 && !b1)                    // BTN0 only
+        {
+            delay_ms(1000);               // wait 1 s
+            MOTOR_CW();
+            delay_ms(1000);               // run 1 s
+            MOTOR_STOP();
+        }
+        else if (b1 && !b0)               // BTN1 only
+        {
+            delay_ms(1000);
+            MOTOR_CCW();
+            delay_ms(1000);
+            MOTOR_STOP();
+        }
+        else                              // both or none
+        {
+            MOTOR_STOP();                 // safety
+        }
+    }
+    return 0;
+}
+
+c) Special‑Function Registers (SFRs) used in Part 2‑c (Seven‑Segment display)
+
+• TRISD / LATD – segments A‑G,DP (RD0–RD7).
+• TRISB / LATB – digit enables D3–D0 (RB4–RB7).
+
+d)  C code for Part 2‑c (Fibonacci on 4‑digit 7‑segment)
+
+/******************************************************************************
+ *   FILE: seven_seg_fib.c
+ *  Target: Beti  Board
+ *
+ *  Function   : Continuously display the Fibonacci sequence on a 4‑digit
+ *               multiplexed seven‑segment module.  Before showing the i‑th
+ *               Fibonacci number F_i, wait  F_i * 100 ms.
+ *
+ *  Hardware   : Segments (a–g,dp)  → RD0‑RD7
+ *               Digit enables      → RB7‑RB4  (D0 least‑significant digit)
+ ******************************************************************************/
+
+#include <xc.h>
+
+//--- CONFIG bits 
+#pragma config FNOSC = PRIPLL, POSCMOD = XT, FPLLMUL = MUL_20, FPLLIDIV = DIV_2
+#pragma config FPBDIV = DIV_1, FWDTEN = OFF, ICESEL = ICS_PGx2, JTAGEN = OFF
+
+// 7‑segment codes for digits 0‑9, common‑anode 
+const unsigned char segCode[10] = {
+ /* a b c d e f g dp */
+  0b00111111, // 0
+  0b00000110, // 1
+  0b01011011, // 2
+  0b01001111, // 3
+  0b01100110, // 4
+  0b01101101, // 5
+  0b01111101, // 6
+  0b00000111, // 7
+  0b01111111, // 8
+  0b01101111  // 9
+};
+
+#define DIGIT_EN_MASK  (0b11110000)   // RB7‑RB4
+
+void delay_ms(unsigned long ms)
+{
+    unsigned long i;
+    while(ms--) for(i=0; i<4000; ++i) asm volatile("nop");
+}
+
+void displayNumber(unsigned int value, unsigned long duration_ms)
+{
+    unsigned int t = 0;
+    while (t < duration_ms)
+    {
+        unsigned int n = value;
+        for (int pos = 0; pos < 4; ++pos)   // D0..D3
+        {
+            LATB &= ~DIGIT_EN_MASK;         // disable all digits
+            LATD = segCode[n % 10];         // segment pattern
+            LATB |= (0x80 >> pos);          // enable required digit
+            n /= 10;
+            delay_ms(2);                    // ~2 ms per digit → 500 Hz refresh
+        }
+        t += 8;                             // 4 digits × 2 ms
+    }
+}
+
+int main(void)
+{
+    
+    //  I/O initialisation
+
+    TRISD = 0x0000;          // segments as OUTPUT
+    TRISB &= ~DIGIT_EN_MASK; // digit enables as OUTPUT
+    LATD  = 0x00;
+    LATB &= ~DIGIT_EN_MASK;
+
+    //  Fibonacci generator (16‑bit fits up to 987 < 1000)
+    
+    unsigned int a = 0, b = 1;      // F_0 = 0 (skipped), F_1 = 1
+
+    while (1)
+    {
+        unsigned int fib = b;       // current Fibonacci number
+
+        unsigned long wait = (unsigned long)fib * 100; // F_i × 100 ms
+        displayNumber(fib, wait);
+
+        // advance sequence:  a,b → b,a+b
+        unsigned int next = a + b;
+        a = b;
+        b = (next > 9999) ? 1 : next;   // wrap to 1 when overflow 4 digits
+    }
+    return 0;
+}
+
