@@ -32,9 +32,9 @@ A full-stack application for submitting, tracking, and managing feature requests
 
 ### Prerequisites
 
-- Node.js 
-- MySQL
-- npm 
+- Node.js v18+
+- MySQL 8.0+
+- npm 9+
   
 ### Install and Run
 
