@@ -38,43 +38,42 @@ A full-stack application for submitting, tracking, and managing feature requests
   
 ### Install and Run
 
-```bash
-# Clone the repo
-
+1. Clone the repo
+```bash 
 git clone https://github.com/SheikhZaeem/Features-App
 cd MV_Feature_App
+```
 
-# Install dependencies
-
+2. Install dependencies
+```bash 
 npm install
+```
 
-# Set up MySQL database
-
+3. Set up MySQL database
 Create a new MySQL database and user with appropriate privileges as shown in folder database/schema.sql 
 
-# Create a .env file in the project root with your database credentials:
-
+4. Create a .env file in the project root with your database credentials:
+```bash 
 DB_HOST=localhost
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_NAME=mobivisor_db
 PORT=4000
-
 ```
+
 ## Running the Application
 
+1. Start the backend server
 ```bash
-# Start the backend server
-
 node server.js
+```
 
-# Start the frontend development server
-
+2. Start the frontend development server
+```bash
 npm run dev
 ```
 
 ## Application Structure
-
 ```bash
 ├── src/
 │   ├── assets/              
