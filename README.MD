@@ -41,7 +41,8 @@ A full-stack application for submitting, tracking, and managing feature requests
 1. Clone the repo
 ```bash 
 git clone https://github.com/SheikhZaeem/Features-App
-cd MV_Feature_App
+
+cd Features-App
 ```
 
 2. Install dependencies
@@ -50,7 +51,7 @@ npm install
 ```
 
 3. Set up MySQL database
-Create a new MySQL database and user with appropriate privileges as shown in folder database/schema.sql 
+Create a new MySQL database and user with appropriate privileges as shown in folder *database/schema.sql*
 
 4. Create a .env file in the project root with your database credentials:
 ```bash 
