@@ -15,6 +15,7 @@ A full-stack application for submitting, tracking, and managing feature requests
 ### Admin Capabilities
 - 🔄 Merge related feature requests
 - ✅ Mark features as implemented
+- 💬 Priority Comments
 - 🗑️ Moderate/delete submissions
 
 ### Technical Highlights

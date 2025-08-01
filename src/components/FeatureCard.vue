@@ -255,8 +255,6 @@ const deleteComment = async (commentId) => {
   }
 };
 
-
-
 const fetchComments = async () => {
   try {
     const response = await fetch(`http://localhost:4000/comments?featureId=${props.feature.id}`);

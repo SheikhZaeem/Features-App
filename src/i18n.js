@@ -5,7 +5,6 @@ import de from './locales/de.json'
 import tr from './locales/tr.json'
 import zh from './locales/zh.json'
 
-
 const messages = {
   en,
   fr,
